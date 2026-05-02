@@ -48,7 +48,7 @@
     `;
     document.head.appendChild(style);
   })();
-</script><th:block th:if="${!#strings.isEmpty(theme.config.custom.headHtml)}" th:utext="${theme.config.custom.headHtml}"></th:block></head> <body> <h1 style="display:none;" th:text="${site.title}"></h1> <header id="header" class="header"> <div class="header-container"> <div class="header-content"> <div class="header-left"> <a class="header-logo" th:href="@{/}" target="_self"> <img class="header-logo-pc" th:if="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="@{/assets/theme/static/images/header/pc-logo.png}" th:alt="${site.title}"> <img class="header-logo-pc" th:unless="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="${theme.config.basic.headerLogo}" th:alt="${site.title}"> <img class="header-logo-mobile" th:if="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="@{/assets/theme/static/images/header/mobile-logo.png}" th:alt="${site.title}"> <img class="header-logo-mobile" th:unless="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="${theme.config.basic.mobileLogo}" th:alt="${site.title}"> </a> <nav class="header-nav" th:with="menu = ${menuFinder.getPrimary()}"> <div class="header-nav-mobile-menu-wrap"> <div class="header-nav-mobile-menu">
+</script><th:block th:if="${!#strings.isEmpty(theme.config.custom.headHtml)}" th:utext="${theme.config.custom.headHtml}"></th:block></head> <body> <h1 style="display:none;" th:text="${site.title}"></h1> <header id="header" class="header"> <div class="header-container"> <div class="header-content"> <div class="header-left"> <a class="header-logo" th:href="@{/}" target="_self"> <img class="header-logo-pc" th:if="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="@{/assets/theme/static/images/header/pc-logo.png}" th:alt="${site.title}"> <img class="header-logo-pc" th:unless="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="${theme.config.basic.headerLogo}" th:alt="${site.title}"> <img class="header-logo-mobile" th:if="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="@{/assets/theme/static/images/header/mobile-logo.png}" th:alt="${site.title}"> <img class="header-logo-mobile" th:unless="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="${theme.config.basic.mobileLogo}" th:alt="${site.title}"> </a> <nav class="header-nav" th:with="menu = ${menuFinder.getPrimary()}"> <div class="header-nav-mobile-menu-wrap"> <div class="header-nav-mobile-menu" role="button" tabindex="0" aria-expanded="false">
 &#39318;&#39029;
 <i class="halorum-icon halorum-icon-down header-nav-mobile-menu-icon"></i> </div> </div> <ul class="header-nav-list"> <li> <a class="header-nav-list-item" th:href="@{/}" target="_self" title="首页">&#39318;&#39029;</a> </li> <li th:each="menuItem : ${menu.menuItems}" th:if="${menuItem.status.href != '/'}"> <a class="header-nav-list-item" th:href="@{${menuItem.status.href}}" th:target="${menuItem.spec.target?.value ?: '_self'}" th:title="${menuItem.status.displayName}" th:text="${menuItem.status.displayName}"></a> </li> </ul> </nav> </div> <div class="header-right"> <div class="header-search-icon-wrap"> <div class="header-search-icon" title="搜索"> <i class="halorum-icon halorum-icon-sousuo"></i> </div> </div> <div class="header-search-wrap"> <form class="header-search-form" method="get" th:action="@{/search}" role="search"> <input id="header-search-input" class="header-search-input" type="text" name="keyword" maxlength="40" placeholder="输入关键字搜索" autocomplete="off"> <label for="header-search-input" class="header-search-btn" tabindex="0"> <i class="halorum-icon halorum-icon-sousuo"></i> </label> <div class="search-history"> <div class="search-history-head"> <span class="search-history-head-title">&#25628;&#32034;&#21382;&#21490;</span> <span class="search-history-clear-btn">&#28165;&#31354;</span> </div> <div class="search-history-list"></div> </div> </form> <a class="header-article-btn" th:href="@{/uc/posts/editor}" target="_self" title="发布">&#21457;&#24067;</a> </div> <div class="header-notification"> <a class="header-comment header-notification-trigger" th:href="@{/uc/notifications}" target="_self" title="通知"> <i class="halorum-icon halorum-icon-tongzhixiaoxi header-comment-icon"></i> </a> <div class="header-notification-popover" role="dialog" aria-label="recent notifications"> <div class="header-notification-head"> <span>&#26368;&#36817;&#36890;&#30693;</span> <button class="header-notification-read" type="button">&#20840;&#37096;&#24050;&#35835;</button> </div> <div class="header-notification-list"> <div class="header-notification-empty">&#27491;&#22312;&#35835;&#21462;&#36890;&#30693;</div> </div> <a class="header-notification-more" th:href="@{/uc/notifications}" target="_self">&#26597;&#30475;&#20840;&#37096;</a> </div> </div> <div class="header-account"> <a class="header-account-trigger" th:href="@{/uc}" target="_self" title="用户中心"> <img class="header-account-avatar" th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" alt="用户头像"> </a> <div class="header-account-popover" role="dialog" aria-label="user menu"> <div class="header-account-head"> <img class="header-account-menu-avatar" th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" alt="用户头像"> <div class="header-account-info"> <div class="header-account-display-name">&#26410;&#30331;&#24405;</div> <div class="header-account-username">@anonymous</div> </div> </div> <div class="header-account-role">&#35775;&#23458;</div> <div class="header-account-actions"> <a class="header-account-action" th:href="@{/uc}" target="_self">&#36827;&#20837;&#29992;&#25143;&#20013;&#24515;</a> <a class="header-account-action admin" th:href="@{/console}" target="_self">&#36827;&#20837;&#31649;&#29702;&#21518;&#21488;</a> </div> </div> </div> </div> </div> </div> </header> <div class="mobile-search"> <div class="mobile-search-mask"></div> <div class="mobile-search-content"> <div class="mobile-search-close"> <i class="halorum-icon halorum-icon-guanbi mobile-search-close-icon"></i> </div> <div class="mobile-search-body"></div> </div> </div> <style>
   #header {
@@ -79,6 +79,23 @@
   .header-notification {
     position: relative;
     flex-shrink: 0;
+  }
+
+  .header-nav-mobile-menu {
+    color: var(--halorum-header-text-color);
+  }
+
+  .header-nav-mobile-menu.active {
+    color: var(--halorum-header-text-active);
+  }
+
+  @media screen and (max-width: 1190px) {
+    .header-nav-list {
+      top: 100%;
+      left: 0;
+      z-index: 1001;
+      margin-left: 0;
+    }
   }
 
   .header-account {
@@ -309,6 +326,53 @@
     text-decoration: none;
   }
 </style> <script>
+  (() => {
+    const nav = document.querySelector(".header-nav");
+    const trigger = nav?.querySelector(".header-nav-mobile-menu");
+    const list = nav?.querySelector(".header-nav-list");
+    if (!nav || !trigger || !list) return;
+
+    const setOpen = (open) => {
+      trigger.classList.toggle("active", open);
+      list.classList.toggle("visible", open);
+      trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    const toggle = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(!list.classList.contains("visible"));
+    };
+
+    trigger.addEventListener("click", toggle);
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        toggle(event);
+        return;
+      }
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    });
+    list.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest("a")) {
+        setOpen(false);
+      }
+    });
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Node && !nav.contains(target)) {
+        setOpen(false);
+      }
+    });
+    window.addEventListener("resize", () => {
+      if (window.matchMedia("(min-width: 1191px)").matches) {
+        setOpen(false);
+      }
+    });
+  })();
+</script> <script>
   (() => {
     const wrap = document.querySelector(".header-notification");
     const list = document.querySelector(".header-notification-list");

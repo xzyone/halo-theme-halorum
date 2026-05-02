@@ -17,7 +17,10 @@ try {
     Get-ChildItem -LiteralPath $themeRoot -Recurse -File -Force |
       Where-Object {
         $_.FullName -notmatch "\\node_modules\\" -and
+        $_.FullName -notmatch "\\\.git\\" -and
         $_.FullName -notmatch "\\\.astro\\" -and
+        $_.FullName -notmatch "\\\.vscode\\" -and
+        $_.FullName -notmatch "\\\.idea\\" -and
         $_.Extension -ne ".zip"
       } |
       ForEach-Object {

@@ -30,7 +30,7 @@
         </a>
         <nav class="header-nav" th:with="menu = ${menuFinder.getPrimary()}">
           <div class="header-nav-mobile-menu-wrap">
-            <div class="header-nav-mobile-menu">
+            <div class="header-nav-mobile-menu" role="button" tabindex="0" aria-expanded="false">
               &#39318;&#39029;
               <i class="halorum-icon halorum-icon-down header-nav-mobile-menu-icon"></i>
             </div>
@@ -166,6 +166,23 @@
   .header-notification {
     position: relative;
     flex-shrink: 0;
+  }
+
+  .header-nav-mobile-menu {
+    color: var(--halorum-header-text-color);
+  }
+
+  .header-nav-mobile-menu.active {
+    color: var(--halorum-header-text-active);
+  }
+
+  @media screen and (max-width: 1190px) {
+    .header-nav-list {
+      top: 100%;
+      left: 0;
+      z-index: 1001;
+      margin-left: 0;
+    }
   }
 
   .header-account {
@@ -396,6 +413,55 @@
     text-decoration: none;
   }
 </style>
+
+<script is:inline>
+  (() => {
+    const nav = document.querySelector(".header-nav");
+    const trigger = nav?.querySelector(".header-nav-mobile-menu");
+    const list = nav?.querySelector(".header-nav-list");
+    if (!nav || !trigger || !list) return;
+
+    const setOpen = (open) => {
+      trigger.classList.toggle("active", open);
+      list.classList.toggle("visible", open);
+      trigger.setAttribute("aria-expanded", String(open));
+    };
+
+    const toggle = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(!list.classList.contains("visible"));
+    };
+
+    trigger.addEventListener("click", toggle);
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        toggle(event);
+        return;
+      }
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    });
+    list.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest("a")) {
+        setOpen(false);
+      }
+    });
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Node && !nav.contains(target)) {
+        setOpen(false);
+      }
+    });
+    window.addEventListener("resize", () => {
+      if (window.matchMedia("(min-width: 1191px)").matches) {
+        setOpen(false);
+      }
+    });
+  })();
+</script>
 
 <script is:inline>
   (() => {
