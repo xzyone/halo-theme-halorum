@@ -1,0 +1,212 @@
+﻿<div class="article-card-wrap">
+  <article
+    class="article-card"
+    th:each="post : ${posts.items}"
+    th:data-link="${post.status.permalink}"
+    itemscope
+    itemtype="http://schema.org/BlogPosting"
+  >
+    <a class="article-card-hidden-a" th:href="@{${post.status.permalink}}" itemprop="url" th:text="${post.spec.title}" aria-label="打开文章"></a>
+    <div class="article-card-head">
+      <span class="article-card-user" itemprop="author">
+        <span itemprop="name" rel="author" th:text="${post.owner.displayName ?: site.title}"></span>
+      </span>
+      <time
+        class="article-card-time"
+        th:datetime="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+        itemprop="datePublished"
+        th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+      ></time>
+      <span class="article-card-category" th:if="${post.categories != null and !post.categories.isEmpty()}">
+        <a
+          class="article-card-category-link"
+          th:each="category : ${post.categories}"
+          th:href="@{${category.status.permalink}}"
+          target="_self"
+          th:title="${category.spec.displayName}"
+          th:text="${category.spec.displayName}"
+        ></a>
+      </span>
+    </div>
+    <div class="article-card-body">
+      <div class="article-card-main">
+        <a class="article-card-main-link" th:href="@{${post.status.permalink}}" target="_self" th:title="${post.spec.title}">
+          <h2 class="article-card-title" itemprop="name headline" th:text="${post.spec.title}"></h2>
+          <p class="article-card-desc" itemprop="articleBody" th:text="${post.status.excerpt}"></p>
+        </a>
+        <div class="article-card-tags" th:if="${post.tags != null and !post.tags.isEmpty()}">
+          <a
+            class="article-card-tag"
+            th:each="tag, iter : ${post.tags}"
+            th:if="${iter.index < 3}"
+            th:href="@{${tag.status.permalink}}"
+            target="_self"
+            th:title="${tag.spec.displayName}"
+            th:text="${tag.spec.displayName}"
+          ></a>
+        </div>
+      </div>
+      <div class="article-card-footer">
+        <div class="article-card-footer-left" itemprop="interactionCount">
+          <span class="article-card-footer-item">
+            <i class="halorum-icon halorum-icon-eye article-card-footer-item-icon"></i>
+            <span class="article-card-footer-count" th:attr="data-count=${post.stats.visit ?: 0}" th:text="${post.stats.visit ?: 0}">0</span>
+          </span>
+          <span class="article-card-footer-item">
+            <i class="halorum-icon halorum-icon-like article-card-footer-item-icon"></i>
+            <span class="article-card-footer-count" th:attr="data-count=${post.stats.upvote ?: 0}" th:text="${post.stats.upvote ?: 0}">0</span>
+          </span>
+          <a class="article-card-footer-item comments" th:href="@{|${post.status.permalink}#comments|}" target="_self" title="文章评论">
+            <i class="halorum-icon halorum-icon-message article-card-footer-item-icon"></i>
+            <span class="article-card-footer-count" th:attr="data-count=${post.stats.comment ?: 0}" th:text="${post.stats.comment ?: 0}">0</span>
+          </a>
+        </div>
+      </div>
+      <div class="article-card-thumb" th:unless="${#strings.isEmpty(post.spec.cover)}">
+        <img
+          class="article-card-thumb-img"
+          th:src="@{/assets/theme/static/images/loading.gif}"
+          th:data-src="${post.spec.cover}"
+          th:data-error="@{/assets/theme/static/images/loading_error.gif}"
+          th:alt="${post.spec.title}"
+        />
+      </div>
+    </div>
+  </article>
+</div>
+<div th:if="${posts.total == 0}" class="article-empty">
+  <div class="article-empty-content">
+    <span>列表为空</span>
+  </div>
+</div>
+
+<style is:inline>
+  .article-card {
+    position: relative;
+  }
+
+  .article-card-main-link {
+    display: block;
+    width: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .article-card-main {
+    min-width: 0;
+    flex: 1 1 auto;
+    padding-right: 16px;
+  }
+
+  .article-card-title {
+    min-height: 24px;
+  }
+
+  .article-card-desc {
+    min-height: 44px;
+    margin-bottom: 10px;
+  }
+
+  .article-card-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 18px;
+    overflow: hidden;
+  }
+
+  .article-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 132px;
+    margin-left: auto;
+    min-height: 24px;
+    flex: 0 0 auto;
+  }
+
+  .article-card-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+  }
+
+  .article-card-footer-item {
+    display: inline-grid;
+    grid-template-columns: 13px 24px;
+    align-items: center;
+    column-gap: 3px;
+    width: 40px;
+    white-space: nowrap;
+  }
+
+  .article-card-footer-item + .article-card-footer-item {
+    margin-left: 0;
+  }
+
+  .article-card-footer-item-icon {
+    display: inline-flex;
+    justify-content: center;
+    width: 13px;
+  }
+
+  .article-card-footer-count {
+    min-width: 0;
+    text-align: left;
+  }
+
+  @media screen and (max-width: 720px) {
+    .article-card-main {
+      padding-right: 10px;
+    }
+
+    .article-card-footer {
+      width: auto;
+    }
+  }
+
+  .article-card-hidden-a {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    text-indent: -9999px;
+    white-space: nowrap;
+  }
+
+  .article-card-category,
+  .article-card-footer,
+  .article-card-tags,
+  .article-card-tag,
+  .article-card-main-link {
+    position: relative;
+    z-index: 2;
+  }
+
+  .article-card-main-link:active {
+    opacity: 0.86;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const formatCount = (value) => {
+      const count = Number(value);
+      if (!Number.isFinite(count) || count < 1000) {
+        return String(Number.isFinite(count) ? count : 0);
+      }
+      const kilo = count / 1000;
+      if (kilo < 10) {
+        return `${kilo.toFixed(1).replace(/\.0$/, '')}k`;
+      }
+      return `${Math.round(kilo)}k`;
+    };
+
+    document.querySelectorAll('.article-card-footer-count[data-count]').forEach((item) => {
+      item.textContent = formatCount(item.dataset.count);
+    });
+  })();
+</script>
+

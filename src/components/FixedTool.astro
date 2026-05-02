@@ -1,0 +1,65 @@
+﻿---
+interface Props {
+  detail?: boolean;
+}
+
+const { detail = false } = Astro.props;
+---
+
+<div class="fixed-tool">
+  <div class="fixed-tool-content">
+    <div class="fixed-tool-item back-to-top">
+      <i class="halorum-icon halorum-icon-arrow_up_fill fixed-tool-item-icon"></i>
+    </div>
+    <div class="fixed-tool-item theme-switch">
+      <i class="halorum-icon halorum-icon-daytime-mode fixed-tool-item-icon dark-icon"></i>
+      <i class="halorum-icon halorum-icon-daytime-mode-fill fixed-tool-item-icon light-icon"></i>
+    </div>
+    {
+      detail && (
+        <div class="fixed-tool-item mobile-directory-tree-toggle">
+          <i class="halorum-icon halorum-icon-unorderedlist fixed-tool-item-icon" />
+        </div>
+      )
+    }
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const backTop = document.querySelector(".back-to-top");
+    const themeSwitch = document.querySelector(".theme-switch");
+    const lightLink = document.querySelector('link[title="light"]');
+    const darkLink = document.querySelector('link[title="dark"]');
+
+    const applyTheme = (theme) => {
+      if (!lightLink || !darkLink) return;
+      const isDark = theme === "dark";
+      lightLink.disabled = isDark;
+      darkLink.disabled = !isDark;
+      themeSwitch?.classList.toggle("dark", isDark);
+      localStorage.setItem("halorum_theme", theme);
+    };
+
+    const savedTheme = localStorage.getItem("halorum_theme");
+    if (savedTheme === "dark" || savedTheme === "light") {
+      applyTheme(savedTheme);
+    }
+
+    themeSwitch?.addEventListener("click", () => {
+      const next = themeSwitch.classList.contains("dark") ? "light" : "dark";
+      applyTheme(next);
+    });
+
+    const onScroll = () => {
+      backTop?.classList.toggle("visible", window.scrollY > 300);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    backTop?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  })();
+</script>
+

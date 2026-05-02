@@ -1,0 +1,384 @@
+﻿/* 浜壊涓婚棰滆壊鍙橀噺 */
+:root {
+	/* 鍩烘湰鑹?*/
+	--halorum-body-bg-color: #f4f5f5;
+	--halorum-img-skeleton-bg: #eeeff2;
+
+	/* 鏂囩珷楠ㄦ灦 */
+	--halorum-skeleton-bg: #fff;
+	--halorum-skeleton-line-bg1: #e4e6eb;
+	--halorum-skeleton-line-bg2: rgba(228, 230, 235, 0.5);
+
+	/** 婊氬姩鏉?*/
+	--halorum-scroll-bar-bg1: #e4e6eb;
+
+	/** 椤堕儴瀵艰埅鏍?*/
+	--halorum-header-bg-color: #fff;
+	--halorum-header-box-shadow: rgba(0, 0, 0, 0.05);
+	--halorum-header-text-color: #515767;
+	--halorum-header-text-hover: #252933;
+	--halorum-header-text-active: #1e80ff;
+	--halorum-header-nav-border-color: #ebebeb;
+	--halorum-header-nav-box-shadow: #ebebeb;
+	--halorum-header-article-btn-bg: #1e80ff;
+	--halorum-header-article-btn-bg-hover: #1171ee;
+	--halorum-header-article-btn-color: #fff;
+	--halorum-header-search-input-border: #c2c8d1;
+	--halorum-header-search-input-border-active: #1e80ff;
+	--halorum-header-search-input-color: #8a919f;
+	--halorum-header-search-placeholder-color: #c0c3cb;
+	--halorum-header-search-btn-color: #86909c;
+	--halorum-header-search-btn-color-active: #1e80ff;
+	--halorum-header-search-btn-bg: #f2f3f5;
+	--halorum-header-search-btn-bg-active: #eaf2ff;
+	--halorum-search-history-title-color: #869aab;
+	--halorum-search-history-clear-color: #1e80ff;
+	--halorum-search-history-text-color: #5e6369;
+	--halorum-search-history-item-bg: #eff2f5;
+	--halorum-header-comment-color: #8a919f;
+	--halorum-header-comment-color-active: #515767;
+	--halorum-mobile-search-bg: #fff;
+	--halorum-mobile-search-mask-bg: rgba(0, 0, 0, 0.6);
+	--halorum-header-login-btn-bg: rgba(30, 128, 255, 0.05);
+	--halorum-header-login-btn-bg-hover: rgba(30, 128, 255, 0.1);
+	--halorum-header-login-btn-border: rgba(30, 128, 255, 0.3);
+	--halorum-header-login-btn-color: #007fff;
+	--halorum-header-menu-text-color: #252933;
+	--halorum-header-menu-count-title-color: #8a919f;
+	--halorum-header-menu-item-bg-hover: #f7f8fa;
+	--halorum-header-menu-item-icon: #8a919f;
+	--halorum-header-menu-footer-text-color: #8a919f;
+	--halorum-header-menu-footer-text-color-hover: #1e80ff;
+
+	/* 鐧诲綍寮圭獥 */
+	--halorum-login-dialog-mask-bg: rgba(0, 0, 0, 0.3);
+	--halorum-login-dialog-content-bg: #fff;
+	--halorum-login-dialog-close-color: #8a919f;
+	--halorum-login-dialog-head-border: rgba(228, 230, 235, 0.5);
+	--halorum-login-dialog-title-color: #252933;
+	--halorum-login-dialog-input-color: #000;
+	--halorum-login-dialog-input-placeholder-color: #c4c7ce;
+	--halorum-login-dialog-input-border: #f2f3f5;
+	--halorum-login-dialog-input-bg: #f2f3f5;
+	--halorum-login-dialog-input-border-focus: #1e80ff;
+	--halorum-login-dialog-input-bg-focus: #fff;
+	--halorum-login-dialog-form-btn-bg: #1e80ff;
+	--halorum-login-dialog-form-btn-bg-hover: #1171ee;
+	--halorum-login-dialog-form-btn-color: #fff;
+	--halorum-login-dialog-body-right-border: #f1f2f5;
+	--halorum-login-dialog-qrcode-border: #e4e6eb;
+	--halorum-login-dialog-footer-color: #8a919f;
+	--halorum-login-dialog-link-color: #1e80ff;
+	--halorum-login-dialog-link-color-hover: #1171ee;
+	--halorum-login-dialog-input-checkbox-border: #c4c7ce;
+	--halorum-login-dialog-input-checkbox-border-active: #1e80ff;
+	--halorum-login-dialog-input-checkbox-bg-active: #1e80ff;
+	--halorum-login-dialog-input-checkbox-icon: #fff;
+	--halorum-login-dialog-input-checkbox-text-active: #1e80ff;
+
+	/* nav */
+	--halorum-nav-bg-color: #fff;
+	--halorum-nav-border: #f1f1f1;
+	--halorum-nav-box-shadow: rgba(0, 0, 0, 0.05);
+	--halorum-nav-list-item-color: #71777c;
+	--halorum-nav-list-item-color-active: #007fff;
+	--halorum-nav-list-secondary-bg: #fff;
+	--halorum-nav-list-secondary-border: #ebebeb;
+	--halorum-nav-list-secondary-box-shadow: rgba(0, 0, 0, 0.15);
+	--halorum-nav-list-secondary-item-color: #71777d;
+	--halorum-nav-list-secondary-item-color-active: #007fff;
+	--halorum-nav-list-secondary-item-bg: #f4f5f5;
+
+	/* secondary-nav */
+	--halorum-secondary-nav-item-bg: #fff;
+	--halorum-secondary-nav-item-bg-active: #007fff;
+	--halorum-secondary-nav-item-color: #8a9aa9;
+	--halorum-secondary-nav-item-color-hover: #007fff;
+	--halorum-secondary-nav-item-color-active: #fff;
+	--halorum-secondary-nav-item-box-shadow: rgba(0, 0, 0, 0.05);
+
+	/* article-nav */
+	--halorum-article-nav-bg: #fff;
+	--halorum-article-nav-border: #e4e6eb;
+	--halorum-article-nav-item-color: #515767;
+	--halorum-article-nav-item-color-hover: #007fff;
+	--halorum-article-nav-item-color-active: #252933;
+	--halorum-article-nav-line-bg: #1e80ff;
+
+	/* article-card */
+	--halorum-article-card-bg: #fff;
+	--halorum-article-card-bg-hover: #fafafa;
+	--halorum-article-card-border: #e5e6eb;
+	--halorum-article-card-head-color: #8a919f;
+	--halorum-article-card-head-border: #e5e6eb;
+	--halorum-article-card-user-color: #515767;
+	--halorum-article-card-category-color-hover: #1e80ff;
+	--halorum-article-card-title-color: #252933;
+	--halorum-article-card-sticky-tag-color: #fff;
+	--halorum-article-card-sticky-tag-bg: #1e80ff;
+	--halorum-article-card-desc-color: #8a919f;
+	--halorum-article-card-footer-color: #8a919f;
+	--halorum-article-card-footer-color-hover: #1e80ff;
+	--halorum-article-card-tag-color: #8a919f;
+	--halorum-article-card-tag-color-hover: #1171ee;
+	--halorum-article-card-tag-bg: #f2f3f5;
+
+	/* article-pagination */
+	--halorum-article-pagination-bg: #fff;
+	--halorum-article-pagination-border: #e4e6eb;
+	--halorum-article-pagination-no-more-color: #8a919f;
+
+	/* pagination-button */
+	--halorum-pagination-button-item-color: #86909c;
+	--halorum-pagination-button-item-color-hover: #fff;
+	--halorum-pagination-button-item-bg: #f2f3f5;
+	--halorum-pagination-button-item-bg-hover: #1e80ff;
+
+	/* article-empty */
+	--halorum-article-empty-bg: #fff;
+	--halorum-article-empty-color: #8a919f;
+
+	/* article-relevant-info */
+	--halorum-article-relevant-info: #515767;
+	--halorum-article-relevant-info-a-color1: #515767;
+	--halorum-article-relevant-info-a-bg1: #f2f3f5;
+	--halorum-article-relevant-info-a-bg1-hover: #e4e6eb;
+	--halorum-article-relevant-info-a-color2: #1e80ff;
+	--halorum-article-relevant-info-a-bg2: #eaf2ff;
+	--halorum-article-relevant-info-a-bg2-hover: rgba(30, 128, 255, 0.16);
+
+	/* toast */
+	--halorum-toast-color: #333;
+	--halorum-toast-bg: #fff;
+	--halorum-toast-border: #ebebeb;
+	--halorum-toast-box-shadow: rgba(0, 0, 0, 0.1);
+	--halorum-toast-color-info: #909399;
+	--halorum-toast-bg-info: #edf2fc;
+	--halorum-toast-border-info: #ebeef5;
+	--halorum-toast-color-success: #67c23a;
+	--halorum-toast-bg-success: #f0f9eb;
+	--halorum-toast-border-success: #e1f3d8;
+	--halorum-toast-color-warning: #e6a23c;
+	--halorum-toast-bg-warning: #fdf6ec;
+	--halorum-toast-border-warning: #faecd8;
+	--halorum-toast-color-error: #f56c6c;
+	--halorum-toast-bg-error: #fef0f0;
+	--halorum-toast-border-error: #fde2e2;
+
+	/* recent-comments */
+	--halorum-recent-comments-bg: #fff;
+	--halorum-recent-comments-border: #e4e6eb;
+	--halorum-recent-comments-head-icon-color: #8a919f;
+	--halorum-recent-comments-title-color: #1d2129;
+	--halorum-recent-comments-list-placeholder-color: #8a919f;
+	--halorum-recent-comments-list-item-bg-hover: rgba(216, 216, 216, 0.1);
+	--halorum-recent-comments-list-item-title-color: #252933;
+	--halorum-recent-comments-list-item-msg-color: #8a919f;
+	--halorum-recent-comments-management-btn-color: #1e80ff;
+	--halorum-recent-comments-management-btn-color-hover: #1171ee;
+
+	/** recommended_article */
+	--halorum-recommended-article-item-tag-bg: rgba(0, 0, 0, 0.2);
+	--halorum-recommended-article-item-tag-color: #fff;
+	--halorum-recommended-article-item-tag-border: #fff;
+
+	/* theme-tool */
+	--halorum-theme-tool-bg: #fff;
+	--halorum-theme-tool-item-bg-hover: rgba(216, 216, 216, 0.1);
+	--halorum-theme-tool-item-img-bg: #f2f3f5;
+	--halorum-theme-tool-item-title-color: #333;
+
+	/* footer */
+	--halorum-footer-color: #8a919f;
+	--halorum-footer-color-hover: #1d7dfa;
+
+	/* fixed-tool */
+	--halorum-fixed-tool-item-bg: #fff;
+	--halorum-fixed-tool-item-color: #909090;
+	--halorum-fixed-tool-item-color-hover: #1e80ff;
+	--halorum-fixed-tool-item-border: #f1f1f1;
+	--halorum-fixed-tool-item-box-shadow: rgba(50, 50, 50, 0.04);
+	--halorum-fixed-tool-item-box-shadow-hover: #ddd;
+
+	/* category-tips */
+	--halorum-category-tips-color: #71777c;
+	--halorum-category-tips-strong-color: #007fff;
+
+	/** 404 */
+	--halorum-error-card-logo-bg: #dde7ff;
+	--halorum-error-card-title-color: #71777c;
+	--halorum-error-card-strong-color: #333;
+	--halorum-halorum-error-bg: #fff;
+	--halorum-halorum-error-card-btn-color: #1e80ff;
+
+	/* article-content-wrapper */
+	--halorum-article-content-wrapper-bg: #fff;
+
+	/* article-content */
+	--halorum-article-content-title: #252933;
+	--halorum-article-content-author-color: #8a919f;
+	--halorum-article-content-author-name: #515767;
+	--halorum-article-content-edit-btn: #1e80ff;
+
+	/* article-author */
+	--halorum-article-author-bg: #fff;
+	--halorum-article-author-head-border: #e4e6eb;
+	--halorum-article-author-name-color: #252933;
+	--halorum-article-author-group-color: #8a919f;
+	--halorum-article-author-item-color: #252933;
+	--halorum-article-author-item-icon: #7bb9ff;
+	--halorum-article-author-item-icon-bg: #e1efff;
+
+	/* latest-posts */
+	--halorum-latest-posts-bg: #fff;
+	--halorum-latest-posts-title: #1d2129;
+	--halorum-latest-posts-title-border: #e4e6eb;
+	--halorum-latest-posts-item-title: #252933;
+	--halorum-latest-posts-item-title-hover: #007fff;
+	--halorum-latest-posts-item-other: #8a919f;
+	--halorum-latest-posts-empty: #8a919f;
+
+	/* directory-tree */
+	--halorum-directory-tree-bg: #fff;
+	--halorum-directory-tree-title: #1d2129;
+	--halorum-directory-tree-title-border: #e4e6eb;
+	--halorum-directory-tree-body-scroll: #e4e6eb;
+	--halorum-directory-tree-item1: #252933;
+	--halorum-directory-tree-item2: #515767;
+	--halorum-directory-tree-item3: #8a919f;
+	--halorum-directory-tree-item-active: #007fff;
+	--halorum-directory-tree-list-item-link-bg-hover: #f2f3f5;
+	--halorum-directory-tree-list-empty: #8a919f;
+
+	/* mobile_directory_tree */
+	--halorum-mobile-directory-tree-mask-bg: rgba(0, 0, 0, 0.3);
+	--halorum-mobile-directory-tree-close-icon: #000;
+	--halorum-mobile-directory-tree-head-border: #e4e6eb;
+	--halorum-mobile-directory-tree-title: #000;
+	--halorum-mobile-directory-tree-content-bg: #fff;
+
+	/* comment */
+	--halorum-comment-bg: #fff;
+	--halorum-comment-title: #252933;
+	--halorum-comment-off: #8a919f;
+
+	/* comment-form */
+	--halorum-comment-form-input: #252933;
+	--halorum-comment-form-input-placeholder: #8a919f;
+	--halorum-comment-form-input-border: #f2f3f5;
+	--halorum-comment-form-input-border-focus: #1e80ff;
+	--halorum-comment-form-input-border-error: #f64242;
+	--halorum-comment-form-input-bg: #f2f3f5;
+	--halorum-comment-form-input-bg-focus: #fff;
+	--halorum-comment-form-btn: #fff;
+	--halorum-comment-form-submit-bg: #abcdff;
+	--halorum-comment-form-submit-bg-success: #1e80ff;
+	--halorum-comment-form-submit-bg-success-hover: #388eff;
+	--halorum-comment-form-cancel-bg: #ff5e54;
+
+	/* comments-list */
+	--halorum-comments-list-title: #252933;
+	--halorum-comment-list-item-author: #252933;
+	--halorum-comment-list-item-secondary: #8a919f;
+	--halorum-comment-list-item-comment: #515767;
+	--halorum-comment-list-item-check: #f53f3f;
+	--halorum-comment-list-item-relation: #1e80ff;
+	--halorum-comment-list-item-relation-hover: #388eff;
+	--halorum-comment-list-item-reply: #8a919f;
+	--halorum-comment-list-item-bg: rgba(247, 248, 250, 0.7);
+
+	/** comment-list-empty */
+	--halorum-comment-list-empty-text-color: #8a919f;
+
+	/* comment-pagination */
+	--halorum-comment-pagination-a: #8a919f;
+	--halorum-comment-pagination-a-hover: #fff;
+	--halorum-comment-pagination-a-bg: #f7f8fa;
+	--halorum-comment-pagination-a-bg-hover: #1e80ff;
+
+	/* copyright */
+	--halorum-copyright-bg: #f7f8fa;
+	--halorum-copyright-title: #252933;
+	--halorum-copyright-desc: #8a919f;
+	--halorum-copyright-a-hover: #1e80ff;
+
+	/* articles-related */
+	--halorum-articles-related-bg: #fff;
+	--halorum-articles-related-title: #252933;
+	--halorum-articles-related-head-border: #e5e6eb;
+	--halorum-articles-related-empty: #8a919f;
+
+	/* article-tool */
+	--halorum-article-tool-item-bg: #fff;
+	--halorum-article-tool-item-color: #8a919f;
+	--halorum-article-tool-item-color-hover: #515767;
+	--halorum-article-tool-item-color-active: #1e80ff;
+	--halorum-article-tool-item-box-shadow: rgba(0, 0, 0, 0.04);
+	--halorum-article-tool-item-badge: #fff;
+	--halorum-article-tool-item-badge-bg: #c2c8d1;
+	--halorum-article-tool-item-badge-bg-active: #1e80ff;
+	--halorum-article-tool-dividing-bg: #e4e6eb;
+	--halorum-article-tool-share-bg: #fff;
+	--halorum-article-tool-share-box-shadow: rgba(81, 87, 103, 0.16);
+	--halorum-article-tool-share-item: #515767;
+	--halorum-article-tool-share-item-bg-hover: #f2f3f5;
+	--halorum-article-tool-wx-qrcode-bg: #fff;
+	--halorum-article-tool-wx-qrcode-box-shadow: rgba(81, 87, 103, 0.16);
+	--halorum-article-tool-wx-qrcode-info: #515767;
+
+	/* emoji */
+	--halorum-emoji-bg: #fff;
+	--halorum-emoji-btn: #8a919f;
+	--halorum-emoji-btn-hover: #1e80ff;
+	--halorum-emoji-picker-box-shadow: rgba(0, 0, 0, 0.1);
+	--halorum-emoji-picker-arrow-bg: #fff;
+	--halorum-emoji-picker-head-border: #e5e6eb;
+	--halorum-emoji-picker-head-item: #252933;
+	--halorum-emoji-picker-head-item-bg-hover: #f1f3f6;
+	--halorum-emoji-picker-head-item-bg-active: #e5e6eb;
+	--halorum-emoji-picker-body-item-bg: #e3e5e7;
+
+	/* links */
+	--halorum-links-bg: #fff;
+	--halorum-links-title: #000;
+	--halorum-links-edit-btn: #1e80ff;
+	--halorum-links-item: #333;
+	--halorum-links-item-bg: #fff;
+	--halorum-links-item-border: #f1f1f1;
+	--halorum-links-item-border-hover: #45b4ff;
+	--halorum-links-blockquote: #515767;
+	--halorum-links-blockquote-bg: #f7f8fa;
+
+	/* notification */
+	--halorum-notification-bg: #fff;
+	--halorum-notification-item-title: #2e3135;
+	--halorum-notification-list-item-link: #007fff;
+	--halorum-notification-list-item-msg: #333;
+	--halorum-notification-list-item-msg-border: #f1f1f2;
+	--halorum-notification-list-item-msg-bg: #fafbfc;
+	--halorum-notification-list-item-footer: #8a9aa9;
+	--halorum-notification-list-item-time: #8a9aa9;
+
+	/* next-article */
+	--halorum-next-article-bg: #fff;
+	--halorum-next-article-title: #1d2129;
+	--halorum-next-article-title-border: #e4e6eb;
+	--halorum-next-article-link: #515767;
+	--halorum-next-article-link-hover: #007fff;
+
+	/* docsearch */
+	--halorum-docsearch-primary-color: #2e89ff;
+
+	/* articles_related */
+	--halorum-articles-related-list-item-footer: #515767;
+	--halorum-articles-related-list-item-other-hover: #1171ee;
+	--halorum-articles-related-list-item-other-border: #e4e6eb;
+	--halorum-articles-related-list-item-tag-color: #8a919f;
+	--halorum-articles-related-list-item-tag-color-hover: #1171ee;
+	--halorum-articles-related-list-item-tag-bg: #f2f3f5;
+
+	/** article_detail_recommended */
+	--halorum-article-detail-recommended-item-tag-color: #fff;
+	--halorum-article-detail-recommended-item-tag-border: #fff;
+	--halorum-article-detail-recommended-item-tag-bg: rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,33 @@
+---
+import HalorumLayout from "../layouts/HalorumLayout.astro";
+---
+
+<HalorumLayout
+  page="category"
+  titleExpression="|分类 - ${site.title}|"
+  descriptionExpression="${site.subtitle}"
+  contentClass="category-content"
+  showCategoryNav
+>
+  <div class="main-left">
+    <div class="category-tips">
+      <div class="category-tips-content">全部分类</div>
+    </div>
+    <div class="article-card-wrap">
+      <article class="article-card" th:each="category : ${categories}" th:data-link="${category.status.permalink}">
+        <div class="article-card-body">
+          <div class="article-card-main">
+            <h2 class="article-card-title">
+              <a th:href="@{${category.status.permalink}}" th:text="${category.spec.displayName}"></a>
+            </h2>
+            <p class="article-card-desc" th:text="${category.spec.description ?: '暂无描述'}"></p>
+            <div class="article-card-footer">
+              <span class="article-card-footer-item" th:text="|${category.postCount} 篇文章|"></span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="main-right"></div>
+</HalorumLayout>

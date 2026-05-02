@@ -1,0 +1,46 @@
+---
+import HalorumLayout from "../../layouts/HalorumLayout.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+---
+
+<HalorumLayout
+  page="404"
+  titleExpression="|404 - ${site.title}|"
+  descriptionExpression="${site.subtitle}"
+  contentClass="not-found-content"
+  showFooterInRight={true}
+>
+  <div class="main-left">
+    <section
+      class="not-found"
+      style="display:flex;min-height:520px;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px 64px;text-align:center;background:#fff;"
+    >
+      <img
+        class="not-found-img"
+        style="width:min(420px,82vw);max-height:300px;object-fit:contain;"
+        th:src="@{/assets/theme/static/images/404.svg}"
+        alt="404"
+      />
+      <h1
+        class="not-found-title"
+        style="margin:28px 0 10px;font-size:26px;font-weight:700;line-height:1.35;color:#1f2329;"
+      >
+        页面走丢了
+      </h1>
+      <p
+        class="not-found-desc"
+        style="margin:0 0 24px;font-size:15px;line-height:1.8;color:#8a919f;"
+      >
+        你访问的内容可能已经移动、删除，或暂时不可用。
+      </p>
+      <a
+        class="not-found-link"
+        style="display:inline-flex;height:38px;align-items:center;justify-content:center;padding:0 18px;font-size:14px;font-weight:500;color:#fff;text-decoration:none;background:#1e80ff;border-radius:4px;"
+        th:href="@{/}"
+      >
+        返回首页
+      </a>
+    </section>
+    <SiteFooter />
+  </div>
+</HalorumLayout>

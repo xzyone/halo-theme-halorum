@@ -1,0 +1,45 @@
+---
+import ArticleContent from "../components/ArticleContent.astro";
+import ArticleTool from "../components/ArticleTool.astro";
+import Copyright from "../components/Copyright.astro";
+import ForumComments from "../components/ForumComments.astro";
+import MobileDirectoryTree from "../components/MobileDirectoryTree.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import HalorumLayout from "../layouts/HalorumLayout.astro";
+---
+
+<HalorumLayout
+  page="page"
+  titleExpression="|${singlePage.spec.title} - ${site.title}|"
+  descriptionExpression="${singlePage.status.excerpt ?: site.subtitle}"
+  contentClass="page-content"
+  detailTools
+  showFooterInRight
+>
+  <div class="main-left">
+    <ArticleTool kind="SinglePage" />
+    <div class="article-content-wrapper">
+      <ArticleContent kind="SinglePage" />
+      <Copyright />
+    </div>
+    <ForumComments kind="SinglePage" nameExpression="${singlePage.metadata.name}" />
+  </div>
+  <div class="main-right">
+    <div class="post-right-sticky">
+      <section class="directory-tree">
+        <div class="directory-tree-content">
+          <div class="directory-tree-head">
+            <h3 class="directory-tree-title">目录</h3>
+          </div>
+          <div class="directory-tree-body">
+            <ul class="directory-tree-list">
+              <div class="directory-tree-list-empty">暂无目录</div>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+    <SiteFooter />
+  </div>
+  <MobileDirectoryTree />
+</HalorumLayout>

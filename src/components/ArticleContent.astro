@@ -1,0 +1,44 @@
+﻿---
+interface Props {
+  kind: "Post" | "SinglePage";
+}
+
+const { kind } = Astro.props;
+const item = kind === "Post" ? "post" : "singlePage";
+const title = kind === "Post" ? "${post.spec.title}" : "${singlePage.spec.title}";
+const content = kind === "Post" ? "${post.content.content}" : "${singlePage.content.content}";
+const publishTime =
+  kind === "Post"
+    ? "${#dates.format(post.spec.publishTime, 'yyyy-MM-dd HH:mm')}"
+    : "${#dates.format(singlePage.spec.publishTime, 'yyyy-MM-dd HH:mm')}";
+const isPost = kind === "Post";
+---
+
+<article class="article-content" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="article-content-card">
+    <div class="article-content-card-head" itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <h1 class="article-content-title" th:text={title}></h1>
+      <div class="article-content-author">
+        <span class="article-content-author-name" itemprop="name" rel="author" th:text={kind === "Post" ? "${post.owner.displayName ?: site.title}" : "${site.title}"}></span>
+        <time class="article-content-time" itemprop="datePublished" th:text={publishTime}></time>
+        {
+          isPost && (
+            <span class="article-content-views" th:if="${post.stats != null}">
+              <i class="halorum-icon halorum-icon-eye article-content-views-icon" /><span th:text="${post.stats.visit ?: 0}">0</span>
+            </span>
+          )
+        }
+      </div>
+    </div>
+    <div class="article-content-card-body">
+      <img
+        class="article-content-title-img"
+        th:if={kind === "Post" ? "${!#strings.isEmpty(post.spec.cover)}" : "${!#strings.isEmpty(singlePage.spec.cover)}"}
+        th:src={kind === "Post" ? "${post.spec.cover}" : "${singlePage.spec.cover}"}
+        th:alt={title}
+      />
+      <div id="markdown" class="article-content-markdown markdown-body" th:utext={content}></div>
+    </div>
+  </div>
+</article>
+

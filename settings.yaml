@@ -1,0 +1,174 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: halorum-setting
+spec:
+  forms:
+    - group: basic
+      label: 基础设置
+      formSchema:
+        - $formkit: attachment
+          name: headerLogo
+          label: 顶部 Logo
+          help: 不上传时使用主题内置 PC Logo。
+          value: ""
+          accepts:
+            - "image/*"
+        - $formkit: attachment
+          name: mobileLogo
+          label: 移动端 Logo
+          help: 不上传时使用主题内置移动端 Logo。
+          value: ""
+          accepts:
+            - "image/*"
+        - $formkit: text
+          name: address
+          label: 联系地址
+          value: ""
+        - $formkit: text
+          name: email
+          label: 联系邮箱
+          value: ""
+        - $formkit: text
+          name: filing
+          label: 备案信息
+          value: ""
+        - $formkit: select
+          name: markdownTheme
+          label: 文章 Markdown 样式
+          value: cyanosis
+          options:
+            - label: Cyanosis
+              value: cyanosis
+            - label: GitHub
+              value: github
+            - label: Halorum
+              value: halorum
+            - label: VuePress
+              value: vuepress
+        - $formkit: select
+          name: highlightTheme
+          label: 代码高亮
+          value: github
+          options:
+            - label: GitHub
+              value: github
+            - label: Atom One Dark
+              value: atom-one-dark
+            - label: Monokai
+              value: monokai
+            - label: Tomorrow
+              value: tomorrow
+
+    - group: sidebar
+      label: 首页设置
+      formSchema:
+        - $formkit: number
+          name: homePostPageSize
+          label: 首页文章分页数量
+          value: 15
+          min: 5
+          max: 50
+          validation: required
+        - $formkit: radio
+          name: homePostLoadMode
+          label: 首页文章加载方式
+          value: pagination
+          options:
+            - label: 分页
+              value: pagination
+            - label: 瀑布流无限加载
+              value: infinite
+        - $formkit: number
+          name: latestPostCount
+          label: 最新文章数量
+          value: 6
+          min: 1
+          max: 20
+          validation: required
+        - $formkit: switch
+          name: showCategoryCards
+          label: 首页显示分类图片卡片
+          value: true
+        - $formkit: categorySelect
+          name: categoryCardCategories
+          label: 分类图片卡片
+          help: 选择后仅展示这些分类；不选择时默认展示前 4 个分类。
+          multiple: true
+          clearable: true
+          searchable: true
+          sortable: true
+        - $formkit: number
+          name: categoryCardLimit
+          label: 未选择分类时显示数量
+          value: 2
+          min: 1
+          max: 12
+          validation: required
+        - $formkit: attachment
+          name: defaultCategoryImage
+          label: 默认分类卡片图片
+          value: /themes/halorum/assets/theme/static/images/home_recommended_article_empty.jpg
+          accepts:
+            - "image/*"
+
+    - group: forum
+      label: 论坛体验
+      formSchema:
+        - $formkit: select
+          name: commentOrder
+          label: 评论排序
+          value: asc
+          help: Halorum 会优先请求正序评论；若评论插件版本不支持该参数，则保持插件默认顺序。
+          options:
+            - label: 正序楼层
+              value: asc
+            - label: 倒序
+              value: desc
+        - $formkit: switch
+          name: showCommentSubtitle
+          label: 显示评论区副标题
+          value: true
+        - $formkit: text
+          name: commentSubtitle
+          label: 评论区副标题
+          value: 和大家一起讨论
+
+    - group: style
+      label: 个性样式
+      formSchema:
+        - $formkit: color
+          name: accentColor
+          label: 主题强调色
+          value: "#1e80ff"
+        - $formkit: range
+          name: cardRadius
+          label: 卡片圆角
+          value: 4
+          min: 0
+          max: 12
+          step: 1
+          help: "$get(cardRadius).value + 'px'"
+        - $formkit: switch
+          name: enableHeaderShadow
+          label: 顶部阴影
+          value: false
+
+    - group: custom
+      label: 扩展设置
+      formSchema:
+        - $formkit: code
+          name: headHtml
+          label: 自定义 Head HTML
+          language: html
+          height: 160px
+        - $formkit: code
+          name: customCss
+          label: 自定义 CSS
+          language: css
+          height: 180px
+        - $formkit: code
+          name: customJs
+          label: 自定义 JavaScript
+          language: javascript
+          height: 180px

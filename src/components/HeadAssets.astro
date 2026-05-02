@@ -1,0 +1,125 @@
+---
+interface Props {
+  page: "home" | "post" | "page" | "category" | "archive" | "links" | "notification" | "404";
+  titleExpression: string;
+  descriptionExpression?: string;
+}
+
+const { page, titleExpression, descriptionExpression = "${site.subtitle}" } = Astro.props;
+
+const styleByPage = {
+  home: "home.6b219619.css",
+  post: "post.1cb27223.css",
+  page: "page.5fb24a19.css",
+  category: "category.e970bdfa.css",
+  archive: "archive.3775018b.css",
+  links: "links.dbd8fdaf.css",
+  notification: "notification.63470a25.css",
+  "404": "404.2a35eb72.css",
+};
+
+const pageStyle = styleByPage[page];
+---
+
+<meta charset="utf-8" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,shrink-to-fit=no,viewport-fit=cover"
+/>
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<meta name="renderer" content="webkit" />
+<meta http-equiv="Window-target" content="_top" />
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta name="description" th:content={descriptionExpression} />
+<meta name="title" th:content={titleExpression} />
+<meta name="path" th:content="@{/assets/theme}" />
+<title th:text={titleExpression}></title>
+
+<link rel="apple-touch-icon" sizes="180x180" th:href="@{/assets/theme/static/images/favicon/apple-touch-icon.png}" />
+<link rel="icon" type="image/png" sizes="32x32" th:href="@{/assets/theme/static/images/favicon/favicon-32x32.png}" />
+<link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/theme/static/images/favicon/favicon-16x16.png}" />
+<link rel="manifest" th:href="@{/assets/theme/static/images/favicon/site.webmanifest}" />
+<link rel="shortcut icon" th:href="@{/assets/theme/static/images/favicon/favicon.ico}" />
+<meta name="theme-color" content="#ffffff" />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" th:content="${site.url}" />
+<meta property="og:title" th:content={titleExpression} />
+<meta property="og:description" th:content={descriptionExpression} />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" th:content={titleExpression} />
+<meta property="twitter:description" th:content={descriptionExpression} />
+
+<meta name="theme-config" data-pagination-type="button" th:data-theme-path="@{/assets/theme}" />
+<link th:href="@{/assets/theme/static/css/theme/light.css}" rel="stylesheet" type="text/css" title="light" />
+<link th:href="@{/assets/theme/static/css/theme/dark.css}" rel="alternate stylesheet" type="text/css" title="dark" />
+<link
+  th:href="@{|/assets/theme/static/css/markdown/${theme.config.basic.markdownTheme ?: 'github'}.css|}"
+  rel="stylesheet"
+  type="text/css"
+/>
+<link
+  th:href="@{|/assets/theme/static/css/highlight/${theme.config.basic.highlightTheme ?: 'github'}.css|}"
+  rel="stylesheet"
+  type="text/css"
+/>
+<script th:src="@{/assets/theme/static/scripts/globalError.js}"></script>
+<link th:href="@{/assets/theme/dist/styles/common.b05765ef.css}" rel="stylesheet" />
+<link th:href={`@{/assets/theme/dist/styles/${pageStyle}}`} rel="stylesheet" />
+<style is:inline>
+  :root {
+    --halorum-header-login-btn-color: #1e80ff;
+    --halorum-header-text-active: #1e80ff;
+    --halorum-article-nav-line-bg: #1e80ff;
+  }
+
+  .article-card,
+  .article-content-wrapper,
+  .article-content-card,
+  .forum-comments,
+  .recent-comments-content,
+  .latest-posts-content,
+  .directory-tree-content,
+  .article-author-content {
+    border-radius: 4px;
+  }
+
+  .header {
+    box-shadow: none;
+  }
+</style>
+<script is:inline th:inline="javascript">
+  (() => {
+    const accentColor = /*[[${theme.config.style.accentColor ?: '#1e80ff'}]]*/ "#1e80ff";
+    const cardRadius = /*[[${theme.config.style.cardRadius ?: 4}]]*/ 4;
+    const enableHeaderShadow = /*[[${theme.config.style.enableHeaderShadow == true}]]*/ false;
+    const root = document.documentElement;
+    root.style.setProperty("--halorum-header-login-btn-color", accentColor);
+    root.style.setProperty("--halorum-header-text-active", accentColor);
+    root.style.setProperty("--halorum-article-nav-line-bg", accentColor);
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .article-card,
+      .article-content-wrapper,
+      .article-content-card,
+      .forum-comments,
+      .recent-comments-content,
+      .latest-posts-content,
+      .directory-tree-content,
+      .article-author-content {
+        border-radius: ${Number(cardRadius) || 4}px;
+      }
+
+      .header {
+        box-shadow: ${enableHeaderShadow ? "0 1px 2px 0 rgba(0, 0, 0, 0.05)" : "none"};
+      }
+    `;
+    document.head.appendChild(style);
+  })();
+</script>
+<style th:if="${!#strings.isEmpty(theme.config.custom.customCss)}" th:utext="${theme.config.custom.customCss}"></style>
+<th:block th:if="${!#strings.isEmpty(theme.config.custom.headHtml)}" th:utext="${theme.config.custom.headHtml}"></th:block>

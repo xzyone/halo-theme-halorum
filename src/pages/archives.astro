@@ -1,0 +1,41 @@
+---
+import HalorumLayout from "../layouts/HalorumLayout.astro";
+---
+
+<HalorumLayout
+  page="archive"
+  titleExpression="|归档 - ${site.title}|"
+  descriptionExpression="${site.subtitle}"
+  contentClass="archive-content"
+  showCategoryNav
+>
+  <div class="main-left">
+    <section class="archive-list">
+      <div class="archive-list-content">
+        <th:block th:each="archive : ${archives.items}">
+          <section class="archive-year">
+            <h2 class="archive-year-title" th:text="${archive.year}"></h2>
+            <th:block th:each="month : ${archive.months}">
+              <div class="archive-month">
+                <h3 class="archive-month-title" th:text="|${month.month} 月|"></h3>
+                <a
+                  class="archive-item"
+                  th:each="post : ${month.posts}"
+                  th:href="@{${post.status.permalink}}"
+                  th:title="${post.spec.title}"
+                >
+                  <time class="archive-item-time" th:text="${#dates.format(post.spec.publishTime, 'MM-dd')}"></time>
+                  <span class="archive-item-title" th:text="${post.spec.title}"></span>
+                </a>
+              </div>
+            </th:block>
+          </section>
+        </th:block>
+        <div th:if="${archives.total == 0}" class="article-empty">
+          <div class="article-empty-content"><span>列表为空</span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="main-right"></div>
+</HalorumLayout>

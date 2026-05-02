@@ -1,0 +1,18 @@
+<nav class="nav">
+  <div class="nav-container">
+    <div class="nav-content">
+      <div class="nav-list">
+        <a class="nav-list-item" th:href="@{/categories}" target="_self" title="全部分类">全部</a>
+        <a
+          class="nav-list-item"
+          th:each="category : ${categoryFinder.listAll()}"
+          th:href="@{${category.status.permalink}}"
+          target="_self"
+          th:title="${category.spec.displayName}"
+          th:text="${category.spec.displayName}"
+        ></a>
+      </div>
+    </div>
+  </div>
+  <div class="nav-secondary-warp"></div>
+</nav>

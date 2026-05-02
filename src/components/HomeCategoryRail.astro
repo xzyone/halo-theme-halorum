@@ -1,0 +1,149 @@
+<aside class="home-board-rail" aria-label="论坛板块">
+  <div class="home-board-card">
+    <div class="home-board-head">
+      <span class="home-board-head-title">板块</span>
+      <a class="home-board-head-link" th:href="@{/categories}" target="_self">全部</a>
+    </div>
+    <nav class="home-board-list">
+      <a class="home-board-item active" th:href="@{/}" target="_self" title="全部帖子">
+        <span class="home-board-icon">
+          <i class="halorum-icon halorum-icon-appstore"></i>
+        </span>
+        <span class="home-board-main">
+          <span class="home-board-name">全部帖子</span>
+          <span class="home-board-meta">社区动态</span>
+        </span>
+      </a>
+      <a
+        class="home-board-item"
+        th:each="category : ${categoryFinder.listAsTree()}"
+        th:href="@{${category.status.permalink}}"
+        target="_self"
+        th:title="${category.spec.displayName}"
+      >
+        <span class="home-board-icon" th:text="${#strings.substring(category.spec.displayName, 0, 1)}">H</span>
+        <span class="home-board-main">
+          <span class="home-board-name" th:text="${category.spec.displayName}"></span>
+          <span class="home-board-meta">进入板块</span>
+        </span>
+      </a>
+    </nav>
+  </div>
+</aside>
+
+<style is:inline>
+  .home-board-rail {
+    flex: 0 0 178px;
+    width: 178px;
+    margin-right: 20px;
+  }
+
+  .home-board-card {
+    position: sticky;
+    top: 80px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--halorum-article-card-bg);
+  }
+
+  .home-board-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 44px;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--halorum-article-card-border);
+  }
+
+  .home-board-head-title {
+    color: var(--halorum-article-card-title-color);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .home-board-head-link {
+    color: var(--halorum-header-login-btn-color);
+    font-size: 12px;
+    text-decoration: none;
+  }
+
+  .home-board-list {
+    padding: 6px 0;
+  }
+
+  .home-board-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 7px 12px;
+    color: var(--halorum-article-card-footer-color);
+    text-decoration: none;
+  }
+
+  .home-board-item:hover,
+  .home-board-item.active {
+    background: var(--halorum-article-card-bg-hover);
+    color: var(--halorum-header-login-btn-color);
+  }
+
+  .home-board-icon {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--halorum-article-relevant-info-a-bg1);
+    color: var(--halorum-header-login-btn-color);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .home-board-item.active .home-board-icon {
+    background: var(--halorum-header-login-btn-color);
+    color: #fff;
+  }
+
+  .home-board-main {
+    display: block;
+    min-width: 0;
+  }
+
+  .home-board-name,
+  .home-board-meta {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .home-board-name {
+    color: var(--halorum-article-card-title-color);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+  }
+
+  .home-board-meta {
+    margin-top: 1px;
+    color: var(--halorum-article-card-footer-color);
+    font-size: 12px;
+    line-height: 17px;
+  }
+
+  @media screen and (max-width: 1180px) {
+    .home-board-rail {
+      flex-basis: 156px;
+      width: 156px;
+      margin-right: 14px;
+    }
+  }
+
+  @media screen and (max-width: 900px) {
+    .home-board-rail {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,1202 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,shrink-to-fit=no,viewport-fit=cover"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta name="renderer" content="webkit"><meta http-equiv="Window-target" content="_top"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" th:content="${post.status.excerpt ?: site.subtitle}"><meta name="title" th:content="|${post.spec.title} - ${site.title}|"><meta name="path" th:content="@{/assets/theme}"><title th:text="|${post.spec.title} - ${site.title}|"></title><link rel="apple-touch-icon" sizes="180x180" th:href="@{/assets/theme/static/images/favicon/apple-touch-icon.png}"><link rel="icon" type="image/png" sizes="32x32" th:href="@{/assets/theme/static/images/favicon/favicon-32x32.png}"><link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/theme/static/images/favicon/favicon-16x16.png}"><link rel="manifest" th:href="@{/assets/theme/static/images/favicon/site.webmanifest}"><link rel="shortcut icon" th:href="@{/assets/theme/static/images/favicon/favicon.ico}"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website"><meta property="og:url" th:content="${site.url}"><meta property="og:title" th:content="|${post.spec.title} - ${site.title}|"><meta property="og:description" th:content="${post.status.excerpt ?: site.subtitle}"><meta property="twitter:card" content="summary_large_image"><meta property="twitter:title" th:content="|${post.spec.title} - ${site.title}|"><meta property="twitter:description" th:content="${post.status.excerpt ?: site.subtitle}"><meta name="theme-config" data-pagination-type="button" th:data-theme-path="@{/assets/theme}"><link th:href="@{/assets/theme/static/css/theme/light.css}" rel="stylesheet" type="text/css" title="light"><link th:href="@{/assets/theme/static/css/theme/dark.css}" rel="alternate stylesheet" type="text/css" title="dark"><link th:href="@{|/assets/theme/static/css/markdown/${theme.config.basic.markdownTheme ?: 'github'}.css|}" rel="stylesheet" type="text/css"><link th:href="@{|/assets/theme/static/css/highlight/${theme.config.basic.highlightTheme ?: 'github'}.css|}" rel="stylesheet" type="text/css"><script th:src="@{/assets/theme/static/scripts/globalError.js}"></script><link th:href="@{/assets/theme/dist/styles/common.b05765ef.css}" rel="stylesheet"><link th:href="@{/assets/theme/dist/styles/post.1cb27223.css}" rel="stylesheet"><style>
+  :root {
+    --halorum-header-login-btn-color: #1e80ff;
+    --halorum-header-text-active: #1e80ff;
+    --halorum-article-nav-line-bg: #1e80ff;
+  }
+
+  .article-card,
+  .article-content-wrapper,
+  .article-content-card,
+  .forum-comments,
+  .recent-comments-content,
+  .latest-posts-content,
+  .directory-tree-content,
+  .article-author-content {
+    border-radius: 4px;
+  }
+
+  .header {
+    box-shadow: none;
+  }
+</style><script th:inline="javascript">
+  (() => {
+    const accentColor = /*[[${theme.config.style.accentColor ?: '#1e80ff'}]]*/ "#1e80ff";
+    const cardRadius = /*[[${theme.config.style.cardRadius ?: 4}]]*/ 4;
+    const enableHeaderShadow = /*[[${theme.config.style.enableHeaderShadow == true}]]*/ false;
+    const root = document.documentElement;
+    root.style.setProperty("--halorum-header-login-btn-color", accentColor);
+    root.style.setProperty("--halorum-header-text-active", accentColor);
+    root.style.setProperty("--halorum-article-nav-line-bg", accentColor);
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .article-card,
+      .article-content-wrapper,
+      .article-content-card,
+      .forum-comments,
+      .recent-comments-content,
+      .latest-posts-content,
+      .directory-tree-content,
+      .article-author-content {
+        border-radius: ${Number(cardRadius) || 4}px;
+      }
+
+      .header {
+        box-shadow: ${enableHeaderShadow ? "0 1px 2px 0 rgba(0, 0, 0, 0.05)" : "none"};
+      }
+    `;
+    document.head.appendChild(style);
+  })();
+</script><th:block th:if="${!#strings.isEmpty(theme.config.custom.headHtml)}" th:utext="${theme.config.custom.headHtml}"></th:block></head> <body> <h1 style="display:none;" th:text="${site.title}"></h1> <header id="header" class="header"> <div class="header-container"> <div class="header-content"> <div class="header-left"> <a class="header-logo" th:href="@{/}" target="_self"> <img class="header-logo-pc" th:if="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="@{/assets/theme/static/images/header/pc-logo.png}" th:alt="${site.title}"> <img class="header-logo-pc" th:unless="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="${theme.config.basic.headerLogo}" th:alt="${site.title}"> <img class="header-logo-mobile" th:if="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="@{/assets/theme/static/images/header/mobile-logo.png}" th:alt="${site.title}"> <img class="header-logo-mobile" th:unless="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="${theme.config.basic.mobileLogo}" th:alt="${site.title}"> </a> <nav class="header-nav" th:with="menu = ${menuFinder.getPrimary()}"> <div class="header-nav-mobile-menu-wrap"> <div class="header-nav-mobile-menu">
+&#39318;&#39029;
+<i class="halorum-icon halorum-icon-down header-nav-mobile-menu-icon"></i> </div> </div> <ul class="header-nav-list"> <li> <a class="header-nav-list-item" th:href="@{/}" target="_self" title="首页">&#39318;&#39029;</a> </li> <li th:each="menuItem : ${menu.menuItems}" th:if="${menuItem.status.href != '/'}"> <a class="header-nav-list-item" th:href="@{${menuItem.status.href}}" th:target="${menuItem.spec.target?.value ?: '_self'}" th:title="${menuItem.status.displayName}" th:text="${menuItem.status.displayName}"></a> </li> </ul> </nav> </div> <div class="header-right"> <div class="header-search-icon-wrap"> <div class="header-search-icon" title="搜索"> <i class="halorum-icon halorum-icon-sousuo"></i> </div> </div> <div class="header-search-wrap"> <form class="header-search-form" method="get" th:action="@{/search}" role="search"> <input id="header-search-input" class="header-search-input" type="text" name="keyword" maxlength="40" placeholder="输入关键字搜索" autocomplete="off"> <label for="header-search-input" class="header-search-btn" tabindex="0"> <i class="halorum-icon halorum-icon-sousuo"></i> </label> <div class="search-history"> <div class="search-history-head"> <span class="search-history-head-title">&#25628;&#32034;&#21382;&#21490;</span> <span class="search-history-clear-btn">&#28165;&#31354;</span> </div> <div class="search-history-list"></div> </div> </form> <a class="header-article-btn" th:href="@{/uc/posts/editor}" target="_self" title="发布">&#21457;&#24067;</a> </div> <div class="header-notification"> <a class="header-comment header-notification-trigger" th:href="@{/uc/notifications}" target="_self" title="通知"> <i class="halorum-icon halorum-icon-tongzhixiaoxi header-comment-icon"></i> </a> <div class="header-notification-popover" role="dialog" aria-label="recent notifications"> <div class="header-notification-head"> <span>&#26368;&#36817;&#36890;&#30693;</span> <button class="header-notification-read" type="button">&#20840;&#37096;&#24050;&#35835;</button> </div> <div class="header-notification-list"> <div class="header-notification-empty">&#27491;&#22312;&#35835;&#21462;&#36890;&#30693;</div> </div> <a class="header-notification-more" th:href="@{/uc/notifications}" target="_self">&#26597;&#30475;&#20840;&#37096;</a> </div> </div> <div class="header-account"> <a class="header-account-trigger" th:href="@{/uc}" target="_self" title="用户中心"> <img class="header-account-avatar" th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" alt="用户头像"> </a> <div class="header-account-popover" role="dialog" aria-label="user menu"> <div class="header-account-head"> <img class="header-account-menu-avatar" th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" alt="用户头像"> <div class="header-account-info"> <div class="header-account-display-name">&#26410;&#30331;&#24405;</div> <div class="header-account-username">@anonymous</div> </div> </div> <div class="header-account-role">&#35775;&#23458;</div> <div class="header-account-actions"> <a class="header-account-action" th:href="@{/uc}" target="_self">&#36827;&#20837;&#29992;&#25143;&#20013;&#24515;</a> <a class="header-account-action admin" th:href="@{/console}" target="_self">&#36827;&#20837;&#31649;&#29702;&#21518;&#21488;</a> </div> </div> </div> </div> </div> </div> </header> <div class="mobile-search"> <div class="mobile-search-mask"></div> <div class="mobile-search-content"> <div class="mobile-search-close"> <i class="halorum-icon halorum-icon-guanbi mobile-search-close-icon"></i> </div> <div class="mobile-search-body"></div> </div> </div> <style>
+  #header {
+    position: fixed !important;
+    z-index: 1000 !important;
+    isolation: isolate;
+    background: #fff !important;
+    background-color: #fff !important;
+    border-bottom: 1px solid var(--halorum-header-nav-border-color);
+    box-shadow: 0 1px 2px 0 var(--halorum-header-box-shadow);
+    opacity: 1 !important;
+  }
+
+  #header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: #fff;
+    pointer-events: none;
+  }
+
+  #header .header-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-notification {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .header-account {
+    position: relative;
+    flex-shrink: 0;
+    margin-left: 10px;
+    height: 100%;
+  }
+
+  .header-account-trigger {
+    width: 42px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .header-account-avatar,
+  .header-account-menu-avatar {
+    display: block;
+    object-fit: cover;
+    border-radius: 50%;
+    background: var(--halorum-img-skeleton-bg);
+  }
+
+  .header-account-avatar {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--halorum-header-nav-border-color);
+  }
+
+  .header-account-popover {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 1000;
+    width: 280px;
+    padding: 16px;
+    border-radius: 4px;
+    background: var(--halorum-recent-comments-bg);
+    border: 1px solid var(--halorum-recent-comments-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .header-account:hover .header-account-popover,
+  .header-account:focus-within .header-account-popover,
+  .header-account.open .header-account-popover {
+    display: block;
+  }
+
+  .header-account-popover::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
+
+  .header-account-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .header-account-menu-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .header-account-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .header-account-display-name {
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 600;
+    color: var(--halorum-recent-comments-list-item-title-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-account-username,
+  .header-account-role {
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+  }
+
+  .header-account-role {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .header-account-actions {
+    display: grid;
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  .header-account-action {
+    height: 34px;
+    line-height: 34px;
+    padding: 0 10px;
+    border-radius: 4px;
+    color: var(--halorum-recent-comments-list-item-title-color);
+    text-decoration: none;
+    font-size: 13px;
+  }
+
+  .header-account-action:hover {
+    color: var(--halorum-header-login-btn-color);
+    background: var(--halorum-recent-comments-list-item-bg-hover);
+  }
+
+  .header-account-action.admin {
+    display: none;
+  }
+
+  .header-account.is-admin .header-account-action.admin {
+    display: block;
+  }
+
+  .header-notification-popover {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: -12px;
+    z-index: 1000;
+    width: 320px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--halorum-recent-comments-bg);
+    border: 1px solid var(--halorum-recent-comments-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .header-notification:hover .header-notification-popover,
+  .header-notification:focus-within .header-notification-popover,
+  .header-notification.open .header-notification-popover {
+    display: block;
+  }
+
+  .header-notification-popover::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
+
+  .header-notification-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+    font-size: 14px;
+    color: var(--halorum-recent-comments-title-color);
+  }
+
+  .header-notification-read {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--halorum-header-login-btn-color);
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .header-notification-item {
+    display: block;
+    position: relative;
+    padding: 12px 16px;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .header-notification-item.unread::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--halorum-header-login-btn-color);
+  }
+
+  .header-notification-item:hover {
+    background: var(--halorum-recent-comments-list-item-bg-hover);
+  }
+
+  .header-notification-title {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--halorum-recent-comments-list-item-title-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-notification-meta,
+  .header-notification-empty,
+  .header-notification-more {
+    font-size: 12px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+  }
+
+  .header-notification-empty {
+    padding: 18px 16px;
+    text-align: center;
+  }
+
+  .header-notification-more {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    text-decoration: none;
+  }
+</style> <script>
+  (() => {
+    const wrap = document.querySelector(".header-notification");
+    const list = document.querySelector(".header-notification-list");
+    const readButton = document.querySelector(".header-notification-read");
+    if (!wrap || !list || !readButton) return;
+
+    let currentItems = [];
+    let closeTimer = 0;
+    const endpoint = "/apis/notification.halo.run/v1alpha1/notifications?page=1&size=5";
+
+    const t = {
+      fallback: "\u4f60\u6709\u4e00\u6761\u65b0\u901a\u77e5",
+      empty: "\u6682\u65e0\u901a\u77e5",
+      loadingFailed: "\u767b\u5f55\u540e\u67e5\u770b\u901a\u77e5",
+      justNow: "\u521a\u521a",
+    };
+
+    const normalizeItems = (data) => {
+      const items = data && (data.items || []);
+      return items.slice(0, 5).map((item) => {
+        const spec = item.spec || item;
+        return {
+          name: (item.metadata && item.metadata.name) || item.name || spec.name || "",
+          title: spec.title || spec.rawContent || spec.reason || t.fallback,
+          time: (item.metadata && item.metadata.creationTimestamp) || "",
+          unread: spec.unread === true,
+          href: "/uc/notifications",
+        };
+      });
+    };
+
+    const escapeHtml = (value) =>
+      String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
+    const render = (items) => {
+      if (!items.length) {
+        list.innerHTML = '<div class="header-notification-empty">' + t.empty + "</div>";
+        return;
+      }
+      list.innerHTML = items
+        .map((item) => {
+          const unreadClass = item.unread ? " unread" : "";
+          return (
+            '<a class="header-notification-item' +
+            unreadClass +
+            '" href="' +
+            item.href +
+            '" data-name="' +
+            escapeHtml(item.name) +
+            '"><div class="header-notification-title">' +
+            escapeHtml(item.title) +
+            '</div><div class="header-notification-meta">' +
+            escapeHtml(item.time || t.justNow) +
+            "</div></a>"
+          );
+        })
+        .join("");
+    };
+
+    const load = async () => {
+      try {
+        const response = await fetch(endpoint, { credentials: "include", headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error("notification request failed");
+        currentItems = normalizeItems(await response.json());
+        render(currentItems);
+        return;
+      } catch (error) {
+        currentItems = [];
+        list.innerHTML = '<div class="header-notification-empty">' + t.loadingFailed + "</div>";
+      }
+    };
+
+    const markAllRead = async () => {
+      const unreadItems = currentItems.filter((item) => item.unread && item.name);
+      if (!unreadItems.length) {
+        load();
+        return;
+      }
+      readButton.disabled = true;
+      const body = JSON.stringify([{ op: "replace", path: "/spec/unread", value: false }]);
+      try {
+        await Promise.all(
+          unreadItems.map((item) =>
+            fetch("/apis/notification.halo.run/v1alpha1/notifications/" + encodeURIComponent(item.name), {
+              method: "PATCH",
+              credentials: "include",
+              headers: { "Content-Type": "application/json-patch+json" },
+              body,
+            })
+          )
+        );
+        load();
+      } catch (error) {
+        window.location.href = "/uc/notifications";
+      } finally {
+        readButton.disabled = false;
+      }
+    };
+
+    const open = () => {
+      window.clearTimeout(closeTimer);
+      document.querySelector(".header-account")?.classList.remove("open");
+      wrap.classList.add("open");
+      load();
+    };
+    const close = () => {
+      closeTimer = window.setTimeout(() => wrap.classList.remove("open"), 120);
+    };
+
+    wrap.addEventListener("mouseenter", open);
+    wrap.addEventListener("mouseleave", close);
+    wrap.addEventListener("focusin", open);
+    wrap.addEventListener("focusout", close);
+    document.querySelector(".header-notification-trigger")?.addEventListener("click", (event) => {
+      if (!wrap.classList.contains("open")) {
+        event.preventDefault();
+        open();
+      }
+    });
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Node && !wrap.contains(target)) {
+        wrap.classList.remove("open");
+      }
+    });
+    readButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      markAllRead();
+    });
+  })();
+</script> <script>
+  (() => {
+    const wrap = document.querySelector(".header-account");
+    if (!wrap) return;
+    let closeTimer = 0;
+
+    const triggerAvatar = wrap.querySelector(".header-account-avatar");
+    const menuAvatar = wrap.querySelector(".header-account-menu-avatar");
+    const displayName = wrap.querySelector(".header-account-display-name");
+    const username = wrap.querySelector(".header-account-username");
+    const role = wrap.querySelector(".header-account-role");
+    const defaultAvatar = triggerAvatar?.getAttribute("src") || "/themes/halorum/assets/theme/static/images/comment/default_avatar.svg";
+
+    const escapeText = (value) => String(value || "").trim();
+    const getRoleLabel = (roles) => {
+      if (!roles || !roles.length) return "\u8bbf\u5ba2";
+      return roles
+        .map((item) => item?.metadata?.annotations?.["rbac.authorization.halo.run/display-name"] || item?.metadata?.name)
+        .filter(Boolean)
+        .join(" / ");
+    };
+
+    const isAdmin = (user, roles) => {
+      const roleNames = [
+        ...(roles || []).map((item) => item?.metadata?.name),
+        user?.metadata?.annotations?.["rbac.authorization.halo.run/role-names"],
+      ]
+        .filter(Boolean)
+        .join(" ");
+      return /super-role|admin|administrator|\*/i.test(roleNames);
+    };
+
+    const renderGuest = () => {
+      if (triggerAvatar) triggerAvatar.src = defaultAvatar;
+      if (menuAvatar) menuAvatar.src = defaultAvatar;
+      if (displayName) displayName.textContent = "\u672a\u767b\u5f55";
+      if (username) username.textContent = "@anonymous";
+      if (role) role.textContent = "\u8bbf\u5ba2";
+      wrap.classList.remove("is-admin");
+    };
+
+    const renderUser = (data) => {
+      const user = data?.user || data;
+      if (!user || user?.metadata?.name === "anonymousUser") {
+        renderGuest();
+        return;
+      }
+      const avatar = user?.spec?.avatar || user?.status?.avatar || defaultAvatar;
+      const name = escapeText(user?.spec?.displayName || user?.metadata?.name || "\u7528\u6237");
+      const account = escapeText(user?.metadata?.name || "user");
+      if (triggerAvatar) triggerAvatar.src = avatar;
+      if (menuAvatar) menuAvatar.src = avatar;
+      if (displayName) displayName.textContent = name;
+      if (username) username.textContent = "@" + account;
+      if (role) role.textContent = getRoleLabel(data?.roles);
+      wrap.classList.toggle("is-admin", isAdmin(user, data?.roles));
+    };
+
+    const loadUser = async () => {
+      try {
+        const response = await fetch("/apis/api.console.halo.run/v1alpha1/users/-", {
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error("not logged in");
+        renderUser(await response.json());
+      } catch (error) {
+        renderGuest();
+      }
+    };
+
+    const open = () => {
+      window.clearTimeout(closeTimer);
+      document.querySelector(".header-notification")?.classList.remove("open");
+      wrap.classList.add("open");
+      loadUser();
+    };
+    const close = () => {
+      closeTimer = window.setTimeout(() => wrap.classList.remove("open"), 120);
+    };
+
+    wrap.addEventListener("mouseenter", open);
+    wrap.addEventListener("mouseleave", close);
+    wrap.addEventListener("focusin", open);
+    wrap.addEventListener("focusout", close);
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Node && !wrap.contains(target)) {
+        wrap.classList.remove("open");
+      }
+    });
+    loadUser();
+  })();
+</script>  <main class="main no-nav" role="main"> <div class="container"> <div class="main-content post-content">  <div class="main-left"> <div class="article-tool"> <div class="article-tool-content"> <div class="article-tool-item badge article-like-btn immersion-hide" th:attr="badge=${post.stats.upvote ?: 0}" th:data-name="${post.metadata.name}" data-plural="posts" data-group="content.halo.run" title="点赞"> <i class="halorum-icon halorum-icon-like-fill article-tool-item-icon"></i> </div> <a class="article-tool-item badge immersion-hide" href="#comments" target="_self" th:attr="badge=${post.stats.comment ?: 0}" title="评论"> <i class="halorum-icon halorum-icon-message-fill article-tool-item-icon"></i> </a> <div class="article-tool-item share immersion-hide" title="分享"> <i class="halorum-icon halorum-icon-fenxiang article-tool-item-icon"></i> <div class="article-tool-share"> <div class="article-tool-share-item wx"> <i class="halorum-icon halorum-icon-wechat-fill article-tool-share-item-icon"></i> <div class="article-tool-share-item-title">微信</div> <div class="article-tool-wx-qrcode"> <img class="article-tool-wx-qrcode-img" src="" alt="微信分享"> <div class="article-tool-wx-qrcode-info">微信扫码分享</div> </div> </div> <a class="article-tool-share-item" th:href="@{|https://connect.qq.com/widget/shareqq/index.html?url=${site.url}&#38;title=${post.spec.title}|}" target="_blank" title="QQ分享"> <i class="halorum-icon halorum-icon-QQ article-tool-share-item-icon"></i> <div class="article-tool-share-item-title">QQ</div> </a> <a class="article-tool-share-item" th:href="@{|https://service.weibo.com/share/share.php?url=${site.url}&#38;title=${post.spec.title}|}" target="_blank" title="新浪微博"> <i class="halorum-icon halorum-icon-weibo article-tool-share-item-icon"></i> <div class="article-tool-share-item-title">新浪微博</div> </a> </div> </div> <div class="article-tool-dividing immersion-hide"></div> <div class="article-tool-item immersion-mode-btn" title="沉浸模式"> <i class="halorum-icon halorum-icon-bg-fullscreen article-tool-item-icon"></i> </div> </div> </div> <script>
+  (() => {
+    const btn = document.querySelector(".article-like-btn");
+    if (!btn || btn.dataset.halorumLikeBound === "true") return;
+    btn.dataset.halorumLikeBound = "true";
+
+    const storageKey = "halorum_upvoted_posts";
+    const getUpvoted = () => {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || "[]");
+      } catch (error) {
+        return [];
+      }
+    };
+    const setUpvoted = (items) => localStorage.setItem(storageKey, JSON.stringify(items));
+    const name = btn.dataset.name;
+    if (!name) return;
+
+    if (getUpvoted().includes(name)) {
+      btn.classList.add("active");
+    }
+
+    const readCount = () => Number(btn.getAttribute("badge") || btn.dataset.badge || "0") || 0;
+    const writeCount = (count) => {
+      btn.setAttribute("badge", String(count));
+      btn.dataset.badge = String(count);
+    };
+
+    btn.addEventListener("click", async () => {
+      const upvoted = getUpvoted();
+      if (upvoted.includes(name) || btn.classList.contains("loading")) return;
+      btn.classList.add("loading");
+      try {
+        const response = await fetch("/apis/api.halo.run/v1alpha1/trackers/upvote", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            plural: btn.dataset.plural || "posts",
+            group: btn.dataset.group || "content.halo.run",
+          }),
+        });
+        if (!response.ok) throw new Error("upvote failed");
+        upvoted.push(name);
+        setUpvoted(upvoted);
+        writeCount(readCount() + 1);
+        btn.classList.add("active");
+      } catch (error) {
+        console.warn("[Halorum] upvote failed", error);
+      } finally {
+        btn.classList.remove("loading");
+      }
+    });
+  })();
+</script> <style>
+  .article-like-btn.active,
+  .article-like-btn.loading {
+    color: var(--halorum-header-login-btn-color);
+  }
+
+  .article-like-btn.loading {
+    opacity: 0.72;
+    pointer-events: none;
+  }
+</style> <div class="article-content-wrapper"> <article class="article-content" itemscope itemtype="http://schema.org/BlogPosting"> <div class="article-content-card"> <div class="article-content-card-head" itemprop="author" itemscope itemtype="http://schema.org/Person"> <h1 class="article-content-title" th:text="${post.spec.title}"></h1> <div class="article-content-author"> <span class="article-content-author-name" itemprop="name" rel="author" th:text="${post.owner.displayName ?: site.title}"></span> <time class="article-content-time" itemprop="datePublished" th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd HH:mm')}"></time> <span class="article-content-views" th:if="${post.stats != null}"> <i class="halorum-icon halorum-icon-eye article-content-views-icon"></i><span th:text="${post.stats.visit ?: 0}">0</span> </span> </div> </div> <div class="article-content-card-body"> <img class="article-content-title-img" th:if="${!#strings.isEmpty(post.spec.cover)}" th:src="${post.spec.cover}" th:alt="${post.spec.title}"> <div id="markdown" class="article-content-markdown markdown-body" th:utext="${post.content.content}"></div> </div> </div> </article> <div class="article-relevant-info"> <div class="article-relevant-info-content"> <span class="article-relevant-info-item"> <span class="article-relevant-info-item-name">分类：</span> <span class="article-relevant-info-item-list category" th:if="${post.categories != null and !post.categories.isEmpty()}"> <a th:each="category : ${post.categories}" th:href="@{${category.status.permalink}}" th:title="${category.spec.displayName}" th:text="${category.spec.displayName}"></a> </span> <span class="article-relevant-info-item-list category" th:if="${post.categories == null or post.categories.isEmpty()}"> <a href="javascript:;">暂无分类</a> </span> </span> <span class="article-relevant-info-item"> <span class="article-relevant-info-item-name">标签：</span> <span class="article-relevant-info-item-list tag" th:if="${post.tags != null and !post.tags.isEmpty()}"> <a th:each="tag : ${post.tags}" th:href="@{${tag.status.permalink}}" th:title="${tag.spec.displayName}" th:text="${tag.spec.displayName}"></a> </span> <span class="article-relevant-info-item-list tag" th:if="${post.tags == null or post.tags.isEmpty()}"> <a href="javascript:;">暂无标签</a> </span> </span> </div> </div> <div class="copyright"> <div class="copyright-content"> <div class="copyright-title">版权声明</div> <div class="copyright-desc">
+本文由 <a th:href="@{/}" th:text="${site.title}"></a> 发布，转载请注明来源。
+</div> </div> </div> </div> <section class="forum-comments" id="comments"> <div class="forum-comments-head"> <h2 class="forum-comments-title">回复</h2> <span class="forum-comments-subtitle" th:if="${theme.config.forum.showCommentSubtitle != false}" th:text="${#strings.isEmpty(theme.config.forum.commentSubtitle) ? '和大家一起讨论' : theme.config.forum.commentSubtitle}">
+和大家一起讨论
+</span> </div> <div class="forum-comments-body"> <script th:inline="javascript">
+      (() => {
+        const order = /*[[${theme.config.forum.commentOrder ?: 'asc'}]]*/ "asc";
+        if (order !== "asc") return;
+        const originalFetch = window.fetch;
+        if (originalFetch.__halorumCommentOrderPatched) return;
+        const patchedFetch = async (input, init) => {
+          const method = (init && init.method ? init.method : "GET").toUpperCase();
+          const rawUrl = typeof input === "string" ? input : input && input.url;
+          if (method === "GET" && rawUrl && rawUrl.includes("/apis/api.commentwidget.halo.run/v1alpha1/config")) {
+            const response = await originalFetch(input, init);
+            const data = await response.clone().json().catch(() => null);
+            if (!data?.basic) return response;
+            data.basic.size = 10;
+            data.basic.withReplies = true;
+            data.basic.replySize = 5;
+            return new Response(JSON.stringify(data), {
+              status: response.status,
+              statusText: response.statusText,
+              headers: response.headers,
+            });
+          }
+          if (method === "GET" && rawUrl && rawUrl.includes("/apis/api.halo.run/v1alpha1/comments")) {
+            const url = new URL(rawUrl, window.location.origin);
+            if (url.pathname.includes("/reply")) {
+              url.searchParams.set("size", "5");
+              url.searchParams.set("sort", "metadata.creationTimestamp,desc");
+            } else {
+              url.searchParams.set("withReplies", "true");
+              url.searchParams.set("replySize", "5");
+              url.searchParams.set("size", "10");
+              if (!url.searchParams.has("sort")) {
+                url.searchParams.set("sort", "metadata.creationTimestamp,asc");
+              }
+            }
+            input = typeof input === "string" ? url.pathname + url.search : new Request(url.toString(), input);
+          }
+          return originalFetch(input, init);
+        };
+        patchedFetch.__halorumCommentOrderPatched = true;
+        window.fetch = patchedFetch;
+      })();
+    </script> <script>
+      (() => {
+        const host = document.currentScript?.closest(".forum-comments");
+        if (!host) return;
+
+        const styleMap = {
+          "comment-widget": `
+            :host {
+              justify-content: stretch !important;
+            }
+            .comment-widget {
+              width: 100% !important;
+              padding: 0 !important;
+            }
+          `,
+          "comment-list": `
+            .comment-list-main {
+              margin-top: 0 !important;
+            }
+            .comment-stats {
+              margin: 0 !important;
+              padding: 14px 24px !important;
+              border-bottom: 1px solid var(--halo-cw-muted-1-color) !important;
+              color: var(--halo-cw-text-2-color) !important;
+              font-size: 14px !important;
+              font-weight: 500 !important;
+            }
+            .comment-list {
+              padding: 0 24px !important;
+            }
+            @media (max-width: 600px) {
+              .comment-stats,
+              .comment-list {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+              }
+            }
+          `,
+          "comment-pagination": `
+            :host {
+              display: flex !important;
+              justify-content: center !important;
+              padding: 16px 24px 22px !important;
+            }
+            .pagination {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 10px !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              list-style: none !important;
+            }
+            .pagination-button {
+              display: inline-flex !important;
+              height: 32px !important;
+              min-width: 72px !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 4px !important;
+              padding: 0 12px !important;
+              border: 0 !important;
+              border-radius: 4px !important;
+              background: var(--halo-cw-muted-3-color) !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 13px !important;
+              white-space: nowrap !important;
+              cursor: pointer !important;
+            }
+            .pagination-button:hover:not(:disabled) {
+              background: var(--halo-cw-primary-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+            .pagination-button:disabled {
+              opacity: 0.45 !important;
+              cursor: not-allowed !important;
+            }
+            .pagination-select {
+              min-width: 74px !important;
+              height: 32px !important;
+              text-align: center !important;
+              font-size: 13px !important;
+              color: var(--halo-cw-text-2-color) !important;
+            }
+          `,
+          "base-comment-item": `
+            .item {
+              gap: 12px !important;
+              padding: 18px 0 !important;
+              border-bottom: 1px solid var(--halo-cw-muted-1-color) !important;
+            }
+            .item-main {
+              min-width: 0 !important;
+            }
+            .item-meta {
+              gap: 8px !important;
+              min-height: 24px !important;
+            }
+            .item-author {
+              font-size: 15px !important;
+              line-height: 24px !important;
+              font-weight: 600 !important;
+              color: var(--halo-cw-text-1-color) !important;
+            }
+            .item-meta-info {
+              font-size: 13px !important;
+              line-height: 22px !important;
+              color: var(--halo-cw-text-3-color) !important;
+            }
+            .item-content {
+              margin-top: 6px !important;
+              color: var(--halo-cw-text-1-color) !important;
+              font-size: 16px !important;
+              line-height: 1.8 !important;
+            }
+            .item-actions {
+              margin-top: 8px !important;
+              gap: 6px !important;
+            }
+            .halorum-floor-badge {
+              margin-left: auto;
+              padding: 2px 8px;
+              border-radius: 999px;
+              background: var(--halo-cw-primary-3-color);
+              color: var(--halo-cw-primary-1-color);
+              font-size: 12px;
+              line-height: 18px;
+              font-weight: 600;
+              white-space: nowrap;
+            }
+          `,
+          "comment-item": `
+            .icon-button {
+              border: 0 !important;
+              border-radius: 4px !important;
+              background: transparent !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 14px !important;
+              padding: 4px 8px !important;
+            }
+            .icon-button:hover {
+              background: var(--halo-cw-muted-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+          `,
+          "reply-item": `
+            .icon-button {
+              border: 0 !important;
+              border-radius: 4px !important;
+              background: transparent !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 14px !important;
+              padding: 4px 8px !important;
+            }
+            .icon-button:hover {
+              background: var(--halo-cw-muted-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+          `,
+          "comment-replies": `
+            .replies-main {
+              margin-top: 10px !important;
+              padding: 10px 12px 12px !important;
+              border-radius: 4px !important;
+              background: var(--halo-cw-muted-3-color) !important;
+            }
+            .replies-list {
+              margin-top: 0 !important;
+            }
+            .replies-list reply-item + reply-item {
+              border-top: 1px solid var(--halo-cw-muted-1-color) !important;
+            }
+            .replies-next:not(.halorum-replies-pagination) {
+              display: none !important;
+            }
+            .halorum-replies-pagination {
+              display: flex !important;
+              justify-content: flex-start !important;
+              gap: 8px !important;
+              margin: 10px 0 0 !important;
+            }
+            .halorum-replies-page-button {
+              height: 28px !important;
+              border: 0 !important;
+              border-radius: 4px !important;
+              padding: 0 10px !important;
+              background: transparent !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 13px !important;
+              cursor: pointer !important;
+            }
+            .halorum-replies-page-button:hover:not(:disabled) {
+              background: var(--halo-cw-primary-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+            .halorum-replies-page-button:disabled {
+              opacity: 0.45 !important;
+              cursor: not-allowed !important;
+            }
+          `,
+          "base-form": `
+            .form {
+              gap: 12px !important;
+              padding: 20px 24px !important;
+              border-bottom: 1px solid var(--halo-cw-muted-1-color) !important;
+              background: var(--halo-cw-muted-3-color) !important;
+            }
+            .form__footer {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 12px !important;
+              flex-wrap: wrap !important;
+            }
+            .form-submit,
+            .form-login,
+            .form-logout {
+              height: 36px !important;
+              border-radius: 4px !important;
+              font-size: 14px !important;
+            }
+            @media (max-width: 600px) {
+              .form {
+                padding: 16px 12px !important;
+              }
+            }
+          `,
+          "comment-editor": `
+            .editor {
+              min-height: 92px !important;
+              border-radius: 4px !important;
+              border-color: var(--halo-cw-muted-1-color) !important;
+              background: var(--halo-cw-muted-3-color) !important;
+            }
+          `,
+        };
+
+        const injectStyle = (element) => {
+          if (!element?.shadowRoot) return;
+          const css = styleMap[element.localName];
+          if (css && !element.shadowRoot.querySelector("style[data-halorum-forum]")) {
+            const style = document.createElement("style");
+            style.dataset.halorumForum = "true";
+            style.textContent = css;
+            element.shadowRoot.appendChild(style);
+          }
+        };
+
+        const allDeep = (root, selector) => {
+          const found = [];
+          const visit = (node) => {
+            if (!node) return;
+            if (node.querySelectorAll) found.push(...node.querySelectorAll(selector));
+            if (node.querySelectorAll) {
+              node.querySelectorAll("*").forEach((child) => {
+                if (child.shadowRoot) visit(child.shadowRoot);
+              });
+            }
+          };
+          visit(root);
+          return found;
+        };
+
+        const labelFloors = () => {
+          const list = allDeep(host, "comment-list")[0];
+          const items = list?.shadowRoot ? Array.from(list.shadowRoot.querySelectorAll("comment-item")) : [];
+          const page = Number(list?.comments?.page || 1);
+          const size = Number(list?.comments?.size || items.length || 20);
+
+          items.forEach((item, index) => {
+            const base = item.shadowRoot?.querySelector("base-comment-item");
+            const meta = base?.shadowRoot?.querySelector(".item-meta");
+            if (!meta) return;
+            let badge = meta.querySelector(".halorum-floor-badge");
+            if (!badge) {
+              badge = document.createElement("span");
+              badge.className = "halorum-floor-badge";
+              meta.appendChild(badge);
+            }
+            badge.textContent = `#${(page - 1) * size + index + 1} 楼`;
+          });
+        };
+
+        const goReplyPage = async (replies, page) => {
+          if (!replies?.comment?.metadata?.name || !Number.isFinite(page) || page < 1) return;
+          const baseUrl = replies.baseUrl || "";
+          const url = new URL(`${baseUrl}/apis/api.halo.run/v1alpha1/comments/${replies.comment.metadata.name}/reply`, window.location.origin);
+          url.searchParams.set("page", String(page));
+          url.searchParams.set("size", "5");
+          url.searchParams.set("sort", "metadata.creationTimestamp,desc");
+          replies.loading = true;
+          replies.requestUpdate?.();
+          try {
+            const response = await fetch(url.pathname + url.search);
+            const data = await response.json();
+            replies.replies = data.items || [];
+            replies.hasNext = Boolean(data.hasNext);
+            replies.page = Number(data.page || page);
+            replies.requestUpdate?.();
+          } catch (error) {
+            console.error(error);
+          } finally {
+            replies.loading = false;
+            replies.requestUpdate?.();
+            setTimeout(enhance, 80);
+          }
+        };
+
+        const enhanceNestedReplies = () => {
+          allDeep(host, "comment-replies").forEach((replies) => {
+            if (!replies.shadowRoot) return;
+            const visibleCount = Number(replies.comment?.status?.visibleReplyCount || replies.replies?.length || 0);
+            if (visibleCount > 0 && !replies.dataset.halorumRecentLoaded) {
+              replies.dataset.halorumRecentLoaded = "true";
+              goReplyPage(replies, 1);
+              return;
+            }
+
+            const page = Number(replies.page || 1);
+            const shouldShowPager = page > 1 || Boolean(replies.hasNext);
+            const root = replies.shadowRoot;
+            root.querySelectorAll(".replies-next:not(.halorum-replies-pagination)").forEach((node) => {
+              node.setAttribute("hidden", "");
+            });
+
+            let pager = root.querySelector(".halorum-replies-pagination");
+            if (!shouldShowPager) {
+              pager?.remove();
+              return;
+            }
+
+            if (!pager) {
+              pager = document.createElement("div");
+              pager.className = "halorum-replies-pagination";
+              root.querySelector(".replies-main")?.appendChild(pager);
+            }
+
+            pager.innerHTML = "";
+            const prev = document.createElement("button");
+            prev.type = "button";
+            prev.className = "halorum-replies-page-button";
+            prev.textContent = "上一页";
+            prev.disabled = page <= 1;
+            prev.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              goReplyPage(replies, page - 1);
+            });
+
+            const next = document.createElement("button");
+            next.type = "button";
+            next.className = "halorum-replies-page-button";
+            next.textContent = "下一页";
+            next.disabled = !replies.hasNext;
+            next.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              goReplyPage(replies, page + 1);
+            });
+
+            pager.append(prev, next);
+          });
+        };
+
+        const localizeForumCopy = () => {
+          allDeep(host, "comment-list").forEach((list) => {
+            const stats = list.shadowRoot?.querySelector(".comment-stats span");
+            if (stats) {
+              stats.textContent = stats.textContent.replace("Comments", "条回复").replace("评论", "回复");
+            }
+          });
+
+          allDeep(host, "base-form").forEach((form) => {
+            const button = form.shadowRoot?.querySelector(".form-submit");
+            if (button) {
+              Array.from(button.childNodes).forEach((node) => {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                  node.textContent = "提交回复";
+                }
+              });
+              if (!button.textContent.includes("提交回复")) {
+                button.append(document.createTextNode("提交回复"));
+              }
+            }
+          });
+
+          allDeep(host, "comment-item, reply-item").forEach((item) => {
+            item.shadowRoot?.querySelectorAll(".icon-button-text").forEach((text) => {
+              const value = text.textContent.trim();
+              if (value === "Add reply" || value === "Reply") text.textContent = "回复";
+              if (value === "Cancel reply") text.textContent = "取消回复";
+            });
+          });
+        };
+
+        const enhance = () => {
+          allDeep(host, Object.keys(styleMap).join(",")).forEach(injectStyle);
+          labelFloors();
+          enhanceNestedReplies();
+          localizeForumCopy();
+        };
+
+        const observer = new MutationObserver(enhance);
+        observer.observe(host, { childList: true, subtree: true });
+        window.addEventListener("halo:comment:created", () => setTimeout(enhance, 300));
+        let runs = 0;
+        const timer = window.setInterval(() => {
+          enhance();
+          runs += 1;
+          if (runs > 40) window.clearInterval(timer);
+        }, 250);
+      })();
+    </script> <halo:comment group="content.halo.run" kind="Post" th:attr="name=${post.metadata.name}"></halo:comment> </div> </section> <style>
+  .forum-comments {
+    margin-bottom: 20px;
+    background: var(--halorum-article-content-wrapper-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--halorum-article-card-border);
+  }
+
+  .forum-comments-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .forum-comments-title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+    color: var(--halorum-article-content-title);
+  }
+
+  .forum-comments-subtitle {
+    font-size: 13px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+  }
+
+  .forum-comments-body {
+    padding: 0;
+  }
+
+  .forum-comments-body comment-widget {
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    line-height: 1.7;
+    color-scheme: light;
+    --halo-cw-primary-1-color: var(--halorum-header-login-btn-color);
+    --halo-cw-primary-2-color: rgba(30, 128, 255, 0.16);
+    --halo-cw-primary-3-color: rgba(30, 128, 255, 0.08);
+    --halo-cw-text-1-color: var(--halorum-article-content-title);
+    --halo-cw-text-2-color: var(--halorum-recent-comments-list-item-title-color);
+    --halo-cw-text-3-color: var(--halorum-recent-comments-list-item-msg-color);
+    --halo-cw-muted-1-color: var(--halorum-recent-comments-border);
+    --halo-cw-muted-2-color: var(--halorum-recent-comments-list-item-bg-hover);
+    --halo-cw-muted-3-color: var(--halorum-article-content-wrapper-bg);
+    --halo-cw-base-rounded: 4px;
+    --halo-cw-avatar-rounded: 50%;
+    --halo-cw-avatar-size: 42px;
+    --halo-cw-base-font-size: 16px;
+    --halo-cw-base-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  [data-theme="dark"] .forum-comments-body comment-widget,
+  html.dark .forum-comments-body comment-widget,
+  body.dark .forum-comments-body comment-widget {
+    color-scheme: dark;
+    --halo-cw-primary-2-color: rgba(30, 128, 255, 0.24);
+    --halo-cw-primary-3-color: rgba(30, 128, 255, 0.16);
+  }
+
+  .forum-comments-body > div[id^="comment-content"] {
+    width: 100%;
+  }
+
+  .forum-comments-body script + div,
+  .forum-comments-body > div {
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 600px) {
+    .forum-comments-head {
+      padding: 16px 12px 12px;
+    }
+
+    .forum-comments-body {
+      padding: 0;
+    }
+  }
+</style> </div> <div class="main-right"> <section class="article-author immersion-hide"> <div class="article-author-content" itemscope itemtype="http://schema.org/Person"> <div class="article-author-head"> <div class="article-author-avatar"> <img th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" th:alt="${post.owner.displayName ?: site.title}"> </div> <div class="article-author-info"> <div class="article-author-name" itemprop="name" th:text="${post.owner.displayName ?: site.title}"></div> <div class="article-author-group">&#20316;&#32773;</div> </div> </div> <div class="article-author-body"> <div class="article-author-item"> <i class="halorum-icon halorum-icon-like-fill article-author-item-icon"></i> <span class="article-author-item-text">
+&#33719;&#24471;&#28857;&#36190; <span th:text="${post.stats.upvote ?: 0}">0</span> </span> </div> <div class="article-author-item"> <i class="halorum-icon halorum-icon-eye-fill article-author-item-icon"></i> <span class="article-author-item-text">
+&#25991;&#31456;&#38405;&#35835; <span th:text="${post.stats.visit ?: 0}">0</span> </span> </div> <div class="article-author-item"> <i class="halorum-icon halorum-icon-sync article-author-item-icon"></i> <span class="article-author-item-text">
+&#21457;&#24067;&#26102;&#38388; <span th:text="${#dates.format(post.spec.publishTime, 'yy-MM-dd HH:mm')}"></span> </span> </div> </div> </div> </section> <section class="latest-posts immersion-hide" role="complementary"> <div class="latest-posts-content"> <div class="latest-posts-head"> <h3 class="latest-posts-title">&#26368;&#26032;&#25991;&#31456;</h3> </div> <div class="latest-posts-body"> <a class="latest-posts-item" th:each="item, iter : ${postFinder.listAll()}" th:if="${iter.index < (theme.config.sidebar.latestPostCount ?: 5)}" th:href="@{${item.status.permalink}}" th:title="${item.spec.title}"> <div class="latest-posts-item-title" th:text="${item.spec.title}"></div> <div class="latest-posts-item-other"> <span class="latest-posts-item-other-item" th:text="|${item.stats.upvote ?: 0} 点赞|">0 &#28857;&#36190;</span> <span> &middot; </span> <span class="latest-posts-item-other-item" th:text="|${item.stats.comment ?: 0} 评论|">0 &#35780;&#35770;</span> </div> </a> <div class="latest-posts-empty" th:if="${postFinder.listAll().isEmpty()}">&#26242;&#26080;&#25991;&#31456;</div> </div> </div> </section> <div class="post-right-sticky"> <section class="directory-tree"> <div class="directory-tree-content"> <div class="directory-tree-head"> <h3 class="directory-tree-title">&#30446;&#24405;</h3> </div> <div class="directory-tree-body"> <ul class="directory-tree-list"> <div class="directory-tree-list-empty">&#26242;&#26080;&#30446;&#24405;</div> </ul> </div> </div> </section> </div> <footer class="footer"> <div class="footer-content"> <div class="footer-item"> <a th:href="@{/categories}" target="_self" title="分类">分类</a> <a th:href="@{/tags}" target="_self" title="标签">标签</a> <a th:href="@{/archives}" target="_self" title="归档">归档</a> <a th:href="@{/sitemap.xml}" target="_blank" title="站点地图">站点地图</a> </div> <div class="footer-item" th:text="|版权所有：${site.title}|">版权所有</div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.address)}" th:text="|联系地址：${theme.config.basic.address}|"></div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.email)}"> <span>联系邮箱：</span><a th:href="|mailto:${theme.config.basic.email}|" target="_self" th:text="${theme.config.basic.email}"></a> </div> <div class="footer-item"> <a th:href="@{/}" target="_self" th:title="${site.title}" th:text="|© ${#dates.year(#dates.createNow())} ${site.title}|"></a> </div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.filing)}" th:text="${theme.config.basic.filing}"></div> <div class="footer-item">
+Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a> </div> </div> </footer> </div> <script>
+  (() => {
+    const markdown = document.querySelector(".article-content-markdown");
+    const list = document.querySelector(".directory-tree-list");
+    if (!markdown || !list) return;
+
+    const headings = Array.from(markdown.querySelectorAll("h2, h3, h4")).filter((heading) => heading.textContent.trim());
+    if (headings.length === 0) return;
+
+    const escapeHtml = (value) =>
+      value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
+    list.innerHTML = headings
+      .map((heading, index) => {
+        const depth = Math.min(Number(heading.tagName.slice(1)) - 1, 3);
+        const id = heading.id || "heading-" + (index + 1);
+        heading.id = id;
+        const title = escapeHtml(heading.textContent.trim());
+        return '<li class="directory-tree-list-item depth-' + depth + '"><div class="directory-tree-list-item-link-wrapper"><a class="directory-tree-list-item-link" href="#' + id + '" title="' + title + '">' + title + "</a></div></li>";
+      })
+      .join("");
+  })();
+</script> <div class="mobile-directory-tree"> <div class="mobile-directory-tree-mask"></div> <div class="mobile-directory-tree-content"> <div class="mobile-directory-tree-head"> <span class="mobile-directory-tree-title">目录</span> <span class="mobile-directory-tree-close"> <i class="halorum-icon halorum-icon-guanbi"></i> </span> </div> <div class="mobile-directory-tree-body"></div> </div> </div>   </div> </div> </main> <div class="fixed-tool"> <div class="fixed-tool-content"> <div class="fixed-tool-item back-to-top"> <i class="halorum-icon halorum-icon-arrow_up_fill fixed-tool-item-icon"></i> </div> <div class="fixed-tool-item theme-switch"> <i class="halorum-icon halorum-icon-daytime-mode fixed-tool-item-icon dark-icon"></i> <i class="halorum-icon halorum-icon-daytime-mode-fill fixed-tool-item-icon light-icon"></i> </div> <div class="fixed-tool-item mobile-directory-tree-toggle"> <i class="halorum-icon halorum-icon-unorderedlist fixed-tool-item-icon"></i> </div> </div> </div> <script>
+  (() => {
+    const backTop = document.querySelector(".back-to-top");
+    const themeSwitch = document.querySelector(".theme-switch");
+    const lightLink = document.querySelector('link[title="light"]');
+    const darkLink = document.querySelector('link[title="dark"]');
+
+    const applyTheme = (theme) => {
+      if (!lightLink || !darkLink) return;
+      const isDark = theme === "dark";
+      lightLink.disabled = isDark;
+      darkLink.disabled = !isDark;
+      themeSwitch?.classList.toggle("dark", isDark);
+      localStorage.setItem("halorum_theme", theme);
+    };
+
+    const savedTheme = localStorage.getItem("halorum_theme");
+    if (savedTheme === "dark" || savedTheme === "light") {
+      applyTheme(savedTheme);
+    }
+
+    themeSwitch?.addEventListener("click", () => {
+      const next = themeSwitch.classList.contains("dark") ? "light" : "dark";
+      applyTheme(next);
+    });
+
+    const onScroll = () => {
+      backTop?.classList.toggle("visible", window.scrollY > 300);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    backTop?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  })();
+</script> <script th:if="${!#strings.isEmpty(theme.config.custom.customJs)}" th:utext="${theme.config.custom.customJs}"></script> </body> </html>

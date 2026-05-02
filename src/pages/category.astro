@@ -1,0 +1,27 @@
+---
+import HomeSidebar from "../components/HomeSidebar.astro";
+import Pagination from "../components/Pagination.astro";
+import PostList from "../components/PostList.astro";
+import HalorumLayout from "../layouts/HalorumLayout.astro";
+---
+
+<HalorumLayout
+  page="category"
+  titleExpression="|${category.spec.displayName} - ${site.title}|"
+  descriptionExpression="${category.spec.description ?: site.subtitle}"
+  contentClass="category-content"
+  showCategoryNav
+  showFooterInRight
+>
+  <div class="main-left">
+    <div class="category-tips">
+      <div class="category-tips-content">
+        <span class="category-tips-name" th:text="${category.spec.displayName}"></span>
+        <span class="category-tips-count" th:text="|${posts.total} 篇文章|"></span>
+      </div>
+    </div>
+    <PostList />
+    <Pagination />
+  </div>
+  <HomeSidebar />
+</HalorumLayout>

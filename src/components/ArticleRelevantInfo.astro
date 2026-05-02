@@ -1,0 +1,27 @@
+<div class="article-relevant-info">
+  <div class="article-relevant-info-content">
+    <span class="article-relevant-info-item">
+      <span class="article-relevant-info-item-name">分类：</span>
+      <span class="article-relevant-info-item-list category" th:if="${post.categories != null and !post.categories.isEmpty()}">
+        <a
+          th:each="category : ${post.categories}"
+          th:href="@{${category.status.permalink}}"
+          th:title="${category.spec.displayName}"
+          th:text="${category.spec.displayName}"
+        ></a>
+      </span>
+      <span class="article-relevant-info-item-list category" th:if="${post.categories == null or post.categories.isEmpty()}">
+        <a href="javascript:;">暂无分类</a>
+      </span>
+    </span>
+    <span class="article-relevant-info-item">
+      <span class="article-relevant-info-item-name">标签：</span>
+      <span class="article-relevant-info-item-list tag" th:if="${post.tags != null and !post.tags.isEmpty()}">
+        <a th:each="tag : ${post.tags}" th:href="@{${tag.status.permalink}}" th:title="${tag.spec.displayName}" th:text="${tag.spec.displayName}"></a>
+      </span>
+      <span class="article-relevant-info-item-list tag" th:if="${post.tags == null or post.tags.isEmpty()}">
+        <a href="javascript:;">暂无标签</a>
+      </span>
+    </span>
+  </div>
+</div>

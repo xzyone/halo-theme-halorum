@@ -1,0 +1,24 @@
+{
+  "name": "halorum",
+  "version": "0.0.1",
+  "description": "Halorum theme for Halo, built with Astro.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro build --watch",
+    "build": "astro build",
+    "pack:theme": "powershell -ExecutionPolicy Bypass -File scripts/package-theme.ps1",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.6.1",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=18.17.1"
+  },
+  "packageManager": "pnpm@10.8.0"
+}

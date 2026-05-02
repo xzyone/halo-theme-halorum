@@ -1,0 +1,572 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,shrink-to-fit=no,viewport-fit=cover"><meta http-equiv="X-UA-Compatible" content="ie=edge"><meta name="renderer" content="webkit"><meta http-equiv="Window-target" content="_top"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" th:content="${site.subtitle}"><meta name="title" th:content="|标签 - ${site.title}|"><meta name="path" th:content="@{/assets/theme}"><title th:text="|标签 - ${site.title}|"></title><link rel="apple-touch-icon" sizes="180x180" th:href="@{/assets/theme/static/images/favicon/apple-touch-icon.png}"><link rel="icon" type="image/png" sizes="32x32" th:href="@{/assets/theme/static/images/favicon/favicon-32x32.png}"><link rel="icon" type="image/png" sizes="16x16" th:href="@{/assets/theme/static/images/favicon/favicon-16x16.png}"><link rel="manifest" th:href="@{/assets/theme/static/images/favicon/site.webmanifest}"><link rel="shortcut icon" th:href="@{/assets/theme/static/images/favicon/favicon.ico}"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website"><meta property="og:url" th:content="${site.url}"><meta property="og:title" th:content="|标签 - ${site.title}|"><meta property="og:description" th:content="${site.subtitle}"><meta property="twitter:card" content="summary_large_image"><meta property="twitter:title" th:content="|标签 - ${site.title}|"><meta property="twitter:description" th:content="${site.subtitle}"><meta name="theme-config" data-pagination-type="button" th:data-theme-path="@{/assets/theme}"><link th:href="@{/assets/theme/static/css/theme/light.css}" rel="stylesheet" type="text/css" title="light"><link th:href="@{/assets/theme/static/css/theme/dark.css}" rel="alternate stylesheet" type="text/css" title="dark"><link th:href="@{|/assets/theme/static/css/markdown/${theme.config.basic.markdownTheme ?: 'github'}.css|}" rel="stylesheet" type="text/css"><link th:href="@{|/assets/theme/static/css/highlight/${theme.config.basic.highlightTheme ?: 'github'}.css|}" rel="stylesheet" type="text/css"><script th:src="@{/assets/theme/static/scripts/globalError.js}"></script><link th:href="@{/assets/theme/dist/styles/common.b05765ef.css}" rel="stylesheet"><link th:href="@{/assets/theme/dist/styles/category.e970bdfa.css}" rel="stylesheet"><style>
+  :root {
+    --halorum-header-login-btn-color: #1e80ff;
+    --halorum-header-text-active: #1e80ff;
+    --halorum-article-nav-line-bg: #1e80ff;
+  }
+
+  .article-card,
+  .article-content-wrapper,
+  .article-content-card,
+  .forum-comments,
+  .recent-comments-content,
+  .latest-posts-content,
+  .directory-tree-content,
+  .article-author-content {
+    border-radius: 4px;
+  }
+
+  .header {
+    box-shadow: none;
+  }
+</style><script th:inline="javascript">
+  (() => {
+    const accentColor = /*[[${theme.config.style.accentColor ?: '#1e80ff'}]]*/ "#1e80ff";
+    const cardRadius = /*[[${theme.config.style.cardRadius ?: 4}]]*/ 4;
+    const enableHeaderShadow = /*[[${theme.config.style.enableHeaderShadow == true}]]*/ false;
+    const root = document.documentElement;
+    root.style.setProperty("--halorum-header-login-btn-color", accentColor);
+    root.style.setProperty("--halorum-header-text-active", accentColor);
+    root.style.setProperty("--halorum-article-nav-line-bg", accentColor);
+
+    const style = document.createElement("style");
+    style.textContent = `
+      .article-card,
+      .article-content-wrapper,
+      .article-content-card,
+      .forum-comments,
+      .recent-comments-content,
+      .latest-posts-content,
+      .directory-tree-content,
+      .article-author-content {
+        border-radius: ${Number(cardRadius) || 4}px;
+      }
+
+      .header {
+        box-shadow: ${enableHeaderShadow ? "0 1px 2px 0 rgba(0, 0, 0, 0.05)" : "none"};
+      }
+    `;
+    document.head.appendChild(style);
+  })();
+</script><th:block th:if="${!#strings.isEmpty(theme.config.custom.headHtml)}" th:utext="${theme.config.custom.headHtml}"></th:block></head> <body> <h1 style="display:none;" th:text="${site.title}"></h1> <header id="header" class="header"> <div class="header-container"> <div class="header-content"> <div class="header-left"> <a class="header-logo" th:href="@{/}" target="_self"> <img class="header-logo-pc" th:if="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="@{/assets/theme/static/images/header/pc-logo.png}" th:alt="${site.title}"> <img class="header-logo-pc" th:unless="${#strings.isEmpty(theme.config.basic.headerLogo)}" th:src="${theme.config.basic.headerLogo}" th:alt="${site.title}"> <img class="header-logo-mobile" th:if="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="@{/assets/theme/static/images/header/mobile-logo.png}" th:alt="${site.title}"> <img class="header-logo-mobile" th:unless="${#strings.isEmpty(theme.config.basic.mobileLogo)}" th:src="${theme.config.basic.mobileLogo}" th:alt="${site.title}"> </a> <nav class="header-nav" th:with="menu = ${menuFinder.getPrimary()}"> <div class="header-nav-mobile-menu-wrap"> <div class="header-nav-mobile-menu">
+&#39318;&#39029;
+<i class="halorum-icon halorum-icon-down header-nav-mobile-menu-icon"></i> </div> </div> <ul class="header-nav-list"> <li> <a class="header-nav-list-item" th:href="@{/}" target="_self" title="首页">&#39318;&#39029;</a> </li> <li th:each="menuItem : ${menu.menuItems}" th:if="${menuItem.status.href != '/'}"> <a class="header-nav-list-item" th:href="@{${menuItem.status.href}}" th:target="${menuItem.spec.target?.value ?: '_self'}" th:title="${menuItem.status.displayName}" th:text="${menuItem.status.displayName}"></a> </li> </ul> </nav> </div> <div class="header-right"> <div class="header-search-icon-wrap"> <div class="header-search-icon" title="搜索"> <i class="halorum-icon halorum-icon-sousuo"></i> </div> </div> <div class="header-search-wrap"> <form class="header-search-form" method="get" th:action="@{/search}" role="search"> <input id="header-search-input" class="header-search-input" type="text" name="keyword" maxlength="40" placeholder="输入关键字搜索" autocomplete="off"> <label for="header-search-input" class="header-search-btn" tabindex="0"> <i class="halorum-icon halorum-icon-sousuo"></i> </label> <div class="search-history"> <div class="search-history-head"> <span class="search-history-head-title">&#25628;&#32034;&#21382;&#21490;</span> <span class="search-history-clear-btn">&#28165;&#31354;</span> </div> <div class="search-history-list"></div> </div> </form> <a class="header-article-btn" th:href="@{/uc/posts/editor}" target="_self" title="发布">&#21457;&#24067;</a> </div> <div class="header-notification"> <a class="header-comment header-notification-trigger" th:href="@{/uc/notifications}" target="_self" title="通知"> <i class="halorum-icon halorum-icon-tongzhixiaoxi header-comment-icon"></i> </a> <div class="header-notification-popover" role="dialog" aria-label="recent notifications"> <div class="header-notification-head"> <span>&#26368;&#36817;&#36890;&#30693;</span> <button class="header-notification-read" type="button">&#20840;&#37096;&#24050;&#35835;</button> </div> <div class="header-notification-list"> <div class="header-notification-empty">&#27491;&#22312;&#35835;&#21462;&#36890;&#30693;</div> </div> <a class="header-notification-more" th:href="@{/uc/notifications}" target="_self">&#26597;&#30475;&#20840;&#37096;</a> </div> </div> <div class="header-account"> <a class="header-account-trigger" th:href="@{/uc}" target="_self" title="用户中心"> <img class="header-account-avatar" th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" alt="用户头像"> </a> <div class="header-account-popover" role="dialog" aria-label="user menu"> <div class="header-account-head"> <img class="header-account-menu-avatar" th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" alt="用户头像"> <div class="header-account-info"> <div class="header-account-display-name">&#26410;&#30331;&#24405;</div> <div class="header-account-username">@anonymous</div> </div> </div> <div class="header-account-role">&#35775;&#23458;</div> <div class="header-account-actions"> <a class="header-account-action" th:href="@{/uc}" target="_self">&#36827;&#20837;&#29992;&#25143;&#20013;&#24515;</a> <a class="header-account-action admin" th:href="@{/console}" target="_self">&#36827;&#20837;&#31649;&#29702;&#21518;&#21488;</a> </div> </div> </div> </div> </div> </div> </header> <div class="mobile-search"> <div class="mobile-search-mask"></div> <div class="mobile-search-content"> <div class="mobile-search-close"> <i class="halorum-icon halorum-icon-guanbi mobile-search-close-icon"></i> </div> <div class="mobile-search-body"></div> </div> </div> <style>
+  #header {
+    position: fixed !important;
+    z-index: 1000 !important;
+    isolation: isolate;
+    background: #fff !important;
+    background-color: #fff !important;
+    border-bottom: 1px solid var(--halorum-header-nav-border-color);
+    box-shadow: 0 1px 2px 0 var(--halorum-header-box-shadow);
+    opacity: 1 !important;
+  }
+
+  #header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: #fff;
+    pointer-events: none;
+  }
+
+  #header .header-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-notification {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .header-account {
+    position: relative;
+    flex-shrink: 0;
+    margin-left: 10px;
+    height: 100%;
+  }
+
+  .header-account-trigger {
+    width: 42px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .header-account-avatar,
+  .header-account-menu-avatar {
+    display: block;
+    object-fit: cover;
+    border-radius: 50%;
+    background: var(--halorum-img-skeleton-bg);
+  }
+
+  .header-account-avatar {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--halorum-header-nav-border-color);
+  }
+
+  .header-account-popover {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 1000;
+    width: 280px;
+    padding: 16px;
+    border-radius: 4px;
+    background: var(--halorum-recent-comments-bg);
+    border: 1px solid var(--halorum-recent-comments-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .header-account:hover .header-account-popover,
+  .header-account:focus-within .header-account-popover,
+  .header-account.open .header-account-popover {
+    display: block;
+  }
+
+  .header-account-popover::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
+
+  .header-account-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .header-account-menu-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .header-account-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .header-account-display-name {
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 600;
+    color: var(--halorum-recent-comments-list-item-title-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-account-username,
+  .header-account-role {
+    font-size: 12px;
+    line-height: 20px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+  }
+
+  .header-account-role {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .header-account-actions {
+    display: grid;
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  .header-account-action {
+    height: 34px;
+    line-height: 34px;
+    padding: 0 10px;
+    border-radius: 4px;
+    color: var(--halorum-recent-comments-list-item-title-color);
+    text-decoration: none;
+    font-size: 13px;
+  }
+
+  .header-account-action:hover {
+    color: var(--halorum-header-login-btn-color);
+    background: var(--halorum-recent-comments-list-item-bg-hover);
+  }
+
+  .header-account-action.admin {
+    display: none;
+  }
+
+  .header-account.is-admin .header-account-action.admin {
+    display: block;
+  }
+
+  .header-notification-popover {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: -12px;
+    z-index: 1000;
+    width: 320px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--halorum-recent-comments-bg);
+    border: 1px solid var(--halorum-recent-comments-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .header-notification:hover .header-notification-popover,
+  .header-notification:focus-within .header-notification-popover,
+  .header-notification.open .header-notification-popover {
+    display: block;
+  }
+
+  .header-notification-popover::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 0;
+    right: 0;
+    height: 12px;
+  }
+
+  .header-notification-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+    font-size: 14px;
+    color: var(--halorum-recent-comments-title-color);
+  }
+
+  .header-notification-read {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--halorum-header-login-btn-color);
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .header-notification-item {
+    display: block;
+    position: relative;
+    padding: 12px 16px;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .header-notification-item.unread::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    left: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--halorum-header-login-btn-color);
+  }
+
+  .header-notification-item:hover {
+    background: var(--halorum-recent-comments-list-item-bg-hover);
+  }
+
+  .header-notification-title {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--halorum-recent-comments-list-item-title-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-notification-meta,
+  .header-notification-empty,
+  .header-notification-more {
+    font-size: 12px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+  }
+
+  .header-notification-empty {
+    padding: 18px 16px;
+    text-align: center;
+  }
+
+  .header-notification-more {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    text-decoration: none;
+  }
+</style> <script>
+  (() => {
+    const wrap = document.querySelector(".header-notification");
+    const list = document.querySelector(".header-notification-list");
+    const readButton = document.querySelector(".header-notification-read");
+    if (!wrap || !list || !readButton) return;
+
+    let currentItems = [];
+    let closeTimer = 0;
+    const endpoint = "/apis/notification.halo.run/v1alpha1/notifications?page=1&size=5";
+
+    const t = {
+      fallback: "\u4f60\u6709\u4e00\u6761\u65b0\u901a\u77e5",
+      empty: "\u6682\u65e0\u901a\u77e5",
+      loadingFailed: "\u767b\u5f55\u540e\u67e5\u770b\u901a\u77e5",
+      justNow: "\u521a\u521a",
+    };
+
+    const normalizeItems = (data) => {
+      const items = data && (data.items || []);
+      return items.slice(0, 5).map((item) => {
+        const spec = item.spec || item;
+        return {
+          name: (item.metadata && item.metadata.name) || item.name || spec.name || "",
+          title: spec.title || spec.rawContent || spec.reason || t.fallback,
+          time: (item.metadata && item.metadata.creationTimestamp) || "",
+          unread: spec.unread === true,
+          href: "/uc/notifications",
+        };
+      });
+    };
+
+    const escapeHtml = (value) =>
+      String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
+    const render = (items) => {
+      if (!items.length) {
+        list.innerHTML = '<div class="header-notification-empty">' + t.empty + "</div>";
+        return;
+      }
+      list.innerHTML = items
+        .map((item) => {
+          const unreadClass = item.unread ? " unread" : "";
+          return (
+            '<a class="header-notification-item' +
+            unreadClass +
+            '" href="' +
+            item.href +
+            '" data-name="' +
+            escapeHtml(item.name) +
+            '"><div class="header-notification-title">' +
+            escapeHtml(item.title) +
+            '</div><div class="header-notification-meta">' +
+            escapeHtml(item.time || t.justNow) +
+            "</div></a>"
+          );
+        })
+        .join("");
+    };
+
+    const load = async () => {
+      try {
+        const response = await fetch(endpoint, { credentials: "include", headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error("notification request failed");
+        currentItems = normalizeItems(await response.json());
+        render(currentItems);
+        return;
+      } catch (error) {
+        currentItems = [];
+        list.innerHTML = '<div class="header-notification-empty">' + t.loadingFailed + "</div>";
+      }
+    };
+
+    const markAllRead = async () => {
+      const unreadItems = currentItems.filter((item) => item.unread && item.name);
+      if (!unreadItems.length) {
+        load();
+        return;
+      }
+      readButton.disabled = true;
+      const body = JSON.stringify([{ op: "replace", path: "/spec/unread", value: false }]);
+      try {
+        await Promise.all(
+          unreadItems.map((item) =>
+            fetch("/apis/notification.halo.run/v1alpha1/notifications/" + encodeURIComponent(item.name), {
+              method: "PATCH",
+              credentials: "include",
+              headers: { "Content-Type": "application/json-patch+json" },
+              body,
+            })
+          )
+        );
+        load();
+      } catch (error) {
+        window.location.href = "/uc/notifications";
+      } finally {
+        readButton.disabled = false;
+      }
+    };
+
+    const open = () => {
+      window.clearTimeout(closeTimer);
+      document.querySelector(".header-account")?.classList.remove("open");
+      wrap.classList.add("open");
+      load();
+    };
+    const close = () => {
+      closeTimer = window.setTimeout(() => wrap.classList.remove("open"), 120);
+    };
+
+    wrap.addEventListener("mouseenter", open);
+    wrap.addEventListener("mouseleave", close);
+    wrap.addEventListener("focusin", open);
+    wrap.addEventListener("focusout", close);
+    document.querySelector(".header-notification-trigger")?.addEventListener("click", (event) => {
+      if (!wrap.classList.contains("open")) {
+        event.preventDefault();
+        open();
+      }
+    });
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Node && !wrap.contains(target)) {
+        wrap.classList.remove("open");
+      }
+    });
+    readButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      markAllRead();
+    });
+  })();
+</script> <script>
+  (() => {
+    const wrap = document.querySelector(".header-account");
+    if (!wrap) return;
+    let closeTimer = 0;
+
+    const triggerAvatar = wrap.querySelector(".header-account-avatar");
+    const menuAvatar = wrap.querySelector(".header-account-menu-avatar");
+    const displayName = wrap.querySelector(".header-account-display-name");
+    const username = wrap.querySelector(".header-account-username");
+    const role = wrap.querySelector(".header-account-role");
+    const defaultAvatar = triggerAvatar?.getAttribute("src") || "/themes/halorum/assets/theme/static/images/comment/default_avatar.svg";
+
+    const escapeText = (value) => String(value || "").trim();
+    const getRoleLabel = (roles) => {
+      if (!roles || !roles.length) return "\u8bbf\u5ba2";
+      return roles
+        .map((item) => item?.metadata?.annotations?.["rbac.authorization.halo.run/display-name"] || item?.metadata?.name)
+        .filter(Boolean)
+        .join(" / ");
+    };
+
+    const isAdmin = (user, roles) => {
+      const roleNames = [
+        ...(roles || []).map((item) => item?.metadata?.name),
+        user?.metadata?.annotations?.["rbac.authorization.halo.run/role-names"],
+      ]
+        .filter(Boolean)
+        .join(" ");
+      return /super-role|admin|administrator|\*/i.test(roleNames);
+    };
+
+    const renderGuest = () => {
+      if (triggerAvatar) triggerAvatar.src = defaultAvatar;
+      if (menuAvatar) menuAvatar.src = defaultAvatar;
+      if (displayName) displayName.textContent = "\u672a\u767b\u5f55";
+      if (username) username.textContent = "@anonymous";
+      if (role) role.textContent = "\u8bbf\u5ba2";
+      wrap.classList.remove("is-admin");
+    };
+
+    const renderUser = (data) => {
+      const user = data?.user || data;
+      if (!user || user?.metadata?.name === "anonymousUser") {
+        renderGuest();
+        return;
+      }
+      const avatar = user?.spec?.avatar || user?.status?.avatar || defaultAvatar;
+      const name = escapeText(user?.spec?.displayName || user?.metadata?.name || "\u7528\u6237");
+      const account = escapeText(user?.metadata?.name || "user");
+      if (triggerAvatar) triggerAvatar.src = avatar;
+      if (menuAvatar) menuAvatar.src = avatar;
+      if (displayName) displayName.textContent = name;
+      if (username) username.textContent = "@" + account;
+      if (role) role.textContent = getRoleLabel(data?.roles);
+      wrap.classList.toggle("is-admin", isAdmin(user, data?.roles));
+    };
+
+    const loadUser = async () => {
+      try {
+        const response = await fetch("/apis/api.console.halo.run/v1alpha1/users/-", {
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error("not logged in");
+        renderUser(await response.json());
+      } catch (error) {
+        renderGuest();
+      }
+    };
+
+    const open = () => {
+      window.clearTimeout(closeTimer);
+      document.querySelector(".header-notification")?.classList.remove("open");
+      wrap.classList.add("open");
+      loadUser();
+    };
+    const close = () => {
+      closeTimer = window.setTimeout(() => wrap.classList.remove("open"), 120);
+    };
+
+    wrap.addEventListener("mouseenter", open);
+    wrap.addEventListener("mouseleave", close);
+    wrap.addEventListener("focusin", open);
+    wrap.addEventListener("focusout", close);
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (target instanceof Node && !wrap.contains(target)) {
+        wrap.classList.remove("open");
+      }
+    });
+    loadUser();
+  })();
+</script> <nav class="nav"> <div class="nav-container"> <div class="nav-content"> <div class="nav-list"> <a class="nav-list-item" th:href="@{/categories}" target="_self" title="全部分类">全部</a> <a class="nav-list-item" th:each="category : ${categoryFinder.listAll()}" th:href="@{${category.status.permalink}}" target="_self" th:title="${category.spec.displayName}" th:text="${category.spec.displayName}"></a> </div> </div> </div> <div class="nav-secondary-warp"></div> </nav> <main class="main" role="main"> <div class="container"> <div class="main-content category-content">  <div class="main-left"> <div class="category-tips"> <div class="category-tips-content">全部标签</div> </div> <div class="article-card-wrap"> <article class="article-card" th:each="tag : ${tags}" th:data-link="${tag.status.permalink}"> <div class="article-card-body"> <div class="article-card-main"> <h2 class="article-card-title"> <a th:href="@{${tag.status.permalink}}" th:text="${tag.spec.displayName}"></a> </h2> <div class="article-card-footer"> <span class="article-card-footer-item" th:text="|${tag.postCount} 篇文章|"></span> </div> </div> </div> </article> </div> </div> <div class="main-right"></div>  <footer class="footer"> <div class="footer-content"> <div class="footer-item"> <a th:href="@{/categories}" target="_self" title="分类">分类</a> <a th:href="@{/tags}" target="_self" title="标签">标签</a> <a th:href="@{/archives}" target="_self" title="归档">归档</a> <a th:href="@{/sitemap.xml}" target="_blank" title="站点地图">站点地图</a> </div> <div class="footer-item" th:text="|版权所有：${site.title}|">版权所有</div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.address)}" th:text="|联系地址：${theme.config.basic.address}|"></div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.email)}"> <span>联系邮箱：</span><a th:href="|mailto:${theme.config.basic.email}|" target="_self" th:text="${theme.config.basic.email}"></a> </div> <div class="footer-item"> <a th:href="@{/}" target="_self" th:title="${site.title}" th:text="|© ${#dates.year(#dates.createNow())} ${site.title}|"></a> </div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.filing)}" th:text="${theme.config.basic.filing}"></div> <div class="footer-item">
+Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a> </div> </div> </footer> </div> </div> </main> <div class="fixed-tool"> <div class="fixed-tool-content"> <div class="fixed-tool-item back-to-top"> <i class="halorum-icon halorum-icon-arrow_up_fill fixed-tool-item-icon"></i> </div> <div class="fixed-tool-item theme-switch"> <i class="halorum-icon halorum-icon-daytime-mode fixed-tool-item-icon dark-icon"></i> <i class="halorum-icon halorum-icon-daytime-mode-fill fixed-tool-item-icon light-icon"></i> </div>  </div> </div> <script>
+  (() => {
+    const backTop = document.querySelector(".back-to-top");
+    const themeSwitch = document.querySelector(".theme-switch");
+    const lightLink = document.querySelector('link[title="light"]');
+    const darkLink = document.querySelector('link[title="dark"]');
+
+    const applyTheme = (theme) => {
+      if (!lightLink || !darkLink) return;
+      const isDark = theme === "dark";
+      lightLink.disabled = isDark;
+      darkLink.disabled = !isDark;
+      themeSwitch?.classList.toggle("dark", isDark);
+      localStorage.setItem("halorum_theme", theme);
+    };
+
+    const savedTheme = localStorage.getItem("halorum_theme");
+    if (savedTheme === "dark" || savedTheme === "light") {
+      applyTheme(savedTheme);
+    }
+
+    themeSwitch?.addEventListener("click", () => {
+      const next = themeSwitch.classList.contains("dark") ? "light" : "dark";
+      applyTheme(next);
+    });
+
+    const onScroll = () => {
+      backTop?.classList.toggle("visible", window.scrollY > 300);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    backTop?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  })();
+</script> <script th:if="${!#strings.isEmpty(theme.config.custom.customJs)}" th:utext="${theme.config.custom.customJs}"></script> </body> </html>

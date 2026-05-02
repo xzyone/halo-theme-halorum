@@ -1,0 +1,564 @@
+﻿---
+interface Props {
+  kind: "Post" | "SinglePage";
+  nameExpression: string;
+}
+
+const { kind, nameExpression } = Astro.props;
+---
+
+<section class="forum-comments" id="comments">
+  <div class="forum-comments-head">
+    <h2 class="forum-comments-title">回复</h2>
+    <span
+      class="forum-comments-subtitle"
+      th:if="${theme.config.forum.showCommentSubtitle != false}"
+      th:text="${#strings.isEmpty(theme.config.forum.commentSubtitle) ? '和大家一起讨论' : theme.config.forum.commentSubtitle}"
+    >
+      和大家一起讨论
+    </span>
+  </div>
+  <div class="forum-comments-body">
+    <script is:inline th:inline="javascript">
+      (() => {
+        const order = /*[[${theme.config.forum.commentOrder ?: 'asc'}]]*/ "asc";
+        if (order !== "asc") return;
+        const originalFetch = window.fetch;
+        if (originalFetch.__halorumCommentOrderPatched) return;
+        const patchedFetch = async (input, init) => {
+          const method = (init && init.method ? init.method : "GET").toUpperCase();
+          const rawUrl = typeof input === "string" ? input : input && input.url;
+          if (method === "GET" && rawUrl && rawUrl.includes("/apis/api.commentwidget.halo.run/v1alpha1/config")) {
+            const response = await originalFetch(input, init);
+            const data = await response.clone().json().catch(() => null);
+            if (!data?.basic) return response;
+            data.basic.size = 10;
+            data.basic.withReplies = true;
+            data.basic.replySize = 5;
+            return new Response(JSON.stringify(data), {
+              status: response.status,
+              statusText: response.statusText,
+              headers: response.headers,
+            });
+          }
+          if (method === "GET" && rawUrl && rawUrl.includes("/apis/api.halo.run/v1alpha1/comments")) {
+            const url = new URL(rawUrl, window.location.origin);
+            if (url.pathname.includes("/reply")) {
+              url.searchParams.set("size", "5");
+              url.searchParams.set("sort", "metadata.creationTimestamp,desc");
+            } else {
+              url.searchParams.set("withReplies", "true");
+              url.searchParams.set("replySize", "5");
+              url.searchParams.set("size", "10");
+              if (!url.searchParams.has("sort")) {
+                url.searchParams.set("sort", "metadata.creationTimestamp,asc");
+              }
+            }
+            input = typeof input === "string" ? url.pathname + url.search : new Request(url.toString(), input);
+          }
+          return originalFetch(input, init);
+        };
+        patchedFetch.__halorumCommentOrderPatched = true;
+        window.fetch = patchedFetch;
+      })();
+    </script>
+    <script is:inline>
+      (() => {
+        const host = document.currentScript?.closest(".forum-comments");
+        if (!host) return;
+
+        const styleMap = {
+          "comment-widget": `
+            :host {
+              justify-content: stretch !important;
+            }
+            .comment-widget {
+              width: 100% !important;
+              padding: 0 !important;
+            }
+          `,
+          "comment-list": `
+            .comment-list-main {
+              margin-top: 0 !important;
+            }
+            .comment-stats {
+              margin: 0 !important;
+              padding: 14px 24px !important;
+              border-bottom: 1px solid var(--halo-cw-muted-1-color) !important;
+              color: var(--halo-cw-text-2-color) !important;
+              font-size: 14px !important;
+              font-weight: 500 !important;
+            }
+            .comment-list {
+              padding: 0 24px !important;
+            }
+            @media (max-width: 600px) {
+              .comment-stats,
+              .comment-list {
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+              }
+            }
+          `,
+          "comment-pagination": `
+            :host {
+              display: flex !important;
+              justify-content: center !important;
+              padding: 16px 24px 22px !important;
+            }
+            .pagination {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 10px !important;
+              margin: 0 !important;
+              padding: 0 !important;
+              list-style: none !important;
+            }
+            .pagination-button {
+              display: inline-flex !important;
+              height: 32px !important;
+              min-width: 72px !important;
+              align-items: center !important;
+              justify-content: center !important;
+              gap: 4px !important;
+              padding: 0 12px !important;
+              border: 0 !important;
+              border-radius: 4px !important;
+              background: var(--halo-cw-muted-3-color) !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 13px !important;
+              white-space: nowrap !important;
+              cursor: pointer !important;
+            }
+            .pagination-button:hover:not(:disabled) {
+              background: var(--halo-cw-primary-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+            .pagination-button:disabled {
+              opacity: 0.45 !important;
+              cursor: not-allowed !important;
+            }
+            .pagination-select {
+              min-width: 74px !important;
+              height: 32px !important;
+              text-align: center !important;
+              font-size: 13px !important;
+              color: var(--halo-cw-text-2-color) !important;
+            }
+          `,
+          "base-comment-item": `
+            .item {
+              gap: 12px !important;
+              padding: 18px 0 !important;
+              border-bottom: 1px solid var(--halo-cw-muted-1-color) !important;
+            }
+            .item-main {
+              min-width: 0 !important;
+            }
+            .item-meta {
+              gap: 8px !important;
+              min-height: 24px !important;
+            }
+            .item-author {
+              font-size: 15px !important;
+              line-height: 24px !important;
+              font-weight: 600 !important;
+              color: var(--halo-cw-text-1-color) !important;
+            }
+            .item-meta-info {
+              font-size: 13px !important;
+              line-height: 22px !important;
+              color: var(--halo-cw-text-3-color) !important;
+            }
+            .item-content {
+              margin-top: 6px !important;
+              color: var(--halo-cw-text-1-color) !important;
+              font-size: 16px !important;
+              line-height: 1.8 !important;
+            }
+            .item-actions {
+              margin-top: 8px !important;
+              gap: 6px !important;
+            }
+            .halorum-floor-badge {
+              margin-left: auto;
+              padding: 2px 8px;
+              border-radius: 999px;
+              background: var(--halo-cw-primary-3-color);
+              color: var(--halo-cw-primary-1-color);
+              font-size: 12px;
+              line-height: 18px;
+              font-weight: 600;
+              white-space: nowrap;
+            }
+          `,
+          "comment-item": `
+            .icon-button {
+              border: 0 !important;
+              border-radius: 4px !important;
+              background: transparent !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 14px !important;
+              padding: 4px 8px !important;
+            }
+            .icon-button:hover {
+              background: var(--halo-cw-muted-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+          `,
+          "reply-item": `
+            .icon-button {
+              border: 0 !important;
+              border-radius: 4px !important;
+              background: transparent !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 14px !important;
+              padding: 4px 8px !important;
+            }
+            .icon-button:hover {
+              background: var(--halo-cw-muted-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+          `,
+          "comment-replies": `
+            .replies-main {
+              margin-top: 10px !important;
+              padding: 10px 12px 12px !important;
+              border-radius: 4px !important;
+              background: var(--halo-cw-muted-3-color) !important;
+            }
+            .replies-list {
+              margin-top: 0 !important;
+            }
+            .replies-list reply-item + reply-item {
+              border-top: 1px solid var(--halo-cw-muted-1-color) !important;
+            }
+            .replies-next:not(.halorum-replies-pagination) {
+              display: none !important;
+            }
+            .halorum-replies-pagination {
+              display: flex !important;
+              justify-content: flex-start !important;
+              gap: 8px !important;
+              margin: 10px 0 0 !important;
+            }
+            .halorum-replies-page-button {
+              height: 28px !important;
+              border: 0 !important;
+              border-radius: 4px !important;
+              padding: 0 10px !important;
+              background: transparent !important;
+              color: var(--halo-cw-text-3-color) !important;
+              font-size: 13px !important;
+              cursor: pointer !important;
+            }
+            .halorum-replies-page-button:hover:not(:disabled) {
+              background: var(--halo-cw-primary-3-color) !important;
+              color: var(--halo-cw-primary-1-color) !important;
+            }
+            .halorum-replies-page-button:disabled {
+              opacity: 0.45 !important;
+              cursor: not-allowed !important;
+            }
+          `,
+          "base-form": `
+            .form {
+              gap: 12px !important;
+              padding: 20px 24px !important;
+              border-bottom: 1px solid var(--halo-cw-muted-1-color) !important;
+              background: var(--halo-cw-muted-3-color) !important;
+            }
+            .form__footer {
+              display: flex !important;
+              align-items: center !important;
+              justify-content: space-between !important;
+              gap: 12px !important;
+              flex-wrap: wrap !important;
+            }
+            .form-submit,
+            .form-login,
+            .form-logout {
+              height: 36px !important;
+              border-radius: 4px !important;
+              font-size: 14px !important;
+            }
+            @media (max-width: 600px) {
+              .form {
+                padding: 16px 12px !important;
+              }
+            }
+          `,
+          "comment-editor": `
+            .editor {
+              min-height: 92px !important;
+              border-radius: 4px !important;
+              border-color: var(--halo-cw-muted-1-color) !important;
+              background: var(--halo-cw-muted-3-color) !important;
+            }
+          `,
+        };
+
+        const injectStyle = (element) => {
+          if (!element?.shadowRoot) return;
+          const css = styleMap[element.localName];
+          if (css && !element.shadowRoot.querySelector("style[data-halorum-forum]")) {
+            const style = document.createElement("style");
+            style.dataset.halorumForum = "true";
+            style.textContent = css;
+            element.shadowRoot.appendChild(style);
+          }
+        };
+
+        const allDeep = (root, selector) => {
+          const found = [];
+          const visit = (node) => {
+            if (!node) return;
+            if (node.querySelectorAll) found.push(...node.querySelectorAll(selector));
+            if (node.querySelectorAll) {
+              node.querySelectorAll("*").forEach((child) => {
+                if (child.shadowRoot) visit(child.shadowRoot);
+              });
+            }
+          };
+          visit(root);
+          return found;
+        };
+
+        const labelFloors = () => {
+          const list = allDeep(host, "comment-list")[0];
+          const items = list?.shadowRoot ? Array.from(list.shadowRoot.querySelectorAll("comment-item")) : [];
+          const page = Number(list?.comments?.page || 1);
+          const size = Number(list?.comments?.size || items.length || 20);
+
+          items.forEach((item, index) => {
+            const base = item.shadowRoot?.querySelector("base-comment-item");
+            const meta = base?.shadowRoot?.querySelector(".item-meta");
+            if (!meta) return;
+            let badge = meta.querySelector(".halorum-floor-badge");
+            if (!badge) {
+              badge = document.createElement("span");
+              badge.className = "halorum-floor-badge";
+              meta.appendChild(badge);
+            }
+            badge.textContent = `#${(page - 1) * size + index + 1} 楼`;
+          });
+        };
+
+        const goReplyPage = async (replies, page) => {
+          if (!replies?.comment?.metadata?.name || !Number.isFinite(page) || page < 1) return;
+          const baseUrl = replies.baseUrl || "";
+          const url = new URL(`${baseUrl}/apis/api.halo.run/v1alpha1/comments/${replies.comment.metadata.name}/reply`, window.location.origin);
+          url.searchParams.set("page", String(page));
+          url.searchParams.set("size", "5");
+          url.searchParams.set("sort", "metadata.creationTimestamp,desc");
+          replies.loading = true;
+          replies.requestUpdate?.();
+          try {
+            const response = await fetch(url.pathname + url.search);
+            const data = await response.json();
+            replies.replies = data.items || [];
+            replies.hasNext = Boolean(data.hasNext);
+            replies.page = Number(data.page || page);
+            replies.requestUpdate?.();
+          } catch (error) {
+            console.error(error);
+          } finally {
+            replies.loading = false;
+            replies.requestUpdate?.();
+            setTimeout(enhance, 80);
+          }
+        };
+
+        const enhanceNestedReplies = () => {
+          allDeep(host, "comment-replies").forEach((replies) => {
+            if (!replies.shadowRoot) return;
+            const visibleCount = Number(replies.comment?.status?.visibleReplyCount || replies.replies?.length || 0);
+            if (visibleCount > 0 && !replies.dataset.halorumRecentLoaded) {
+              replies.dataset.halorumRecentLoaded = "true";
+              goReplyPage(replies, 1);
+              return;
+            }
+
+            const page = Number(replies.page || 1);
+            const shouldShowPager = page > 1 || Boolean(replies.hasNext);
+            const root = replies.shadowRoot;
+            root.querySelectorAll(".replies-next:not(.halorum-replies-pagination)").forEach((node) => {
+              node.setAttribute("hidden", "");
+            });
+
+            let pager = root.querySelector(".halorum-replies-pagination");
+            if (!shouldShowPager) {
+              pager?.remove();
+              return;
+            }
+
+            if (!pager) {
+              pager = document.createElement("div");
+              pager.className = "halorum-replies-pagination";
+              root.querySelector(".replies-main")?.appendChild(pager);
+            }
+
+            pager.innerHTML = "";
+            const prev = document.createElement("button");
+            prev.type = "button";
+            prev.className = "halorum-replies-page-button";
+            prev.textContent = "上一页";
+            prev.disabled = page <= 1;
+            prev.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              goReplyPage(replies, page - 1);
+            });
+
+            const next = document.createElement("button");
+            next.type = "button";
+            next.className = "halorum-replies-page-button";
+            next.textContent = "下一页";
+            next.disabled = !replies.hasNext;
+            next.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              goReplyPage(replies, page + 1);
+            });
+
+            pager.append(prev, next);
+          });
+        };
+
+        const localizeForumCopy = () => {
+          allDeep(host, "comment-list").forEach((list) => {
+            const stats = list.shadowRoot?.querySelector(".comment-stats span");
+            if (stats) {
+              stats.textContent = stats.textContent.replace("Comments", "条回复").replace("评论", "回复");
+            }
+          });
+
+          allDeep(host, "base-form").forEach((form) => {
+            const button = form.shadowRoot?.querySelector(".form-submit");
+            if (button) {
+              Array.from(button.childNodes).forEach((node) => {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                  node.textContent = "提交回复";
+                }
+              });
+              if (!button.textContent.includes("提交回复")) {
+                button.append(document.createTextNode("提交回复"));
+              }
+            }
+          });
+
+          allDeep(host, "comment-item, reply-item").forEach((item) => {
+            item.shadowRoot?.querySelectorAll(".icon-button-text").forEach((text) => {
+              const value = text.textContent.trim();
+              if (value === "Add reply" || value === "Reply") text.textContent = "回复";
+              if (value === "Cancel reply") text.textContent = "取消回复";
+            });
+          });
+        };
+
+        const enhance = () => {
+          allDeep(host, Object.keys(styleMap).join(",")).forEach(injectStyle);
+          labelFloors();
+          enhanceNestedReplies();
+          localizeForumCopy();
+        };
+
+        const observer = new MutationObserver(enhance);
+        observer.observe(host, { childList: true, subtree: true });
+        window.addEventListener("halo:comment:created", () => setTimeout(enhance, 300));
+        let runs = 0;
+        const timer = window.setInterval(() => {
+          enhance();
+          runs += 1;
+          if (runs > 40) window.clearInterval(timer);
+        }, 250);
+      })();
+    </script>
+    <halo:comment group="content.halo.run" kind={kind} th:attr={`name=${nameExpression}`}></halo:comment>
+  </div>
+</section>
+
+<style is:inline>
+  .forum-comments {
+    margin-bottom: 20px;
+    background: var(--halorum-article-content-wrapper-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--halorum-article-card-border);
+  }
+
+  .forum-comments-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+  }
+
+  .forum-comments-title {
+    margin: 0;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+    color: var(--halorum-article-content-title);
+  }
+
+  .forum-comments-subtitle {
+    font-size: 13px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+  }
+
+  .forum-comments-body {
+    padding: 0;
+  }
+
+  .forum-comments-body comment-widget {
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    line-height: 1.7;
+    color-scheme: light;
+    --halo-cw-primary-1-color: var(--halorum-header-login-btn-color);
+    --halo-cw-primary-2-color: rgba(30, 128, 255, 0.16);
+    --halo-cw-primary-3-color: rgba(30, 128, 255, 0.08);
+    --halo-cw-text-1-color: var(--halorum-article-content-title);
+    --halo-cw-text-2-color: var(--halorum-recent-comments-list-item-title-color);
+    --halo-cw-text-3-color: var(--halorum-recent-comments-list-item-msg-color);
+    --halo-cw-muted-1-color: var(--halorum-recent-comments-border);
+    --halo-cw-muted-2-color: var(--halorum-recent-comments-list-item-bg-hover);
+    --halo-cw-muted-3-color: var(--halorum-article-content-wrapper-bg);
+    --halo-cw-base-rounded: 4px;
+    --halo-cw-avatar-rounded: 50%;
+    --halo-cw-avatar-size: 42px;
+    --halo-cw-base-font-size: 16px;
+    --halo-cw-base-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  [data-theme="dark"] .forum-comments-body comment-widget,
+  html.dark .forum-comments-body comment-widget,
+  body.dark .forum-comments-body comment-widget {
+    color-scheme: dark;
+    --halo-cw-primary-2-color: rgba(30, 128, 255, 0.24);
+    --halo-cw-primary-3-color: rgba(30, 128, 255, 0.16);
+  }
+
+  .forum-comments-body > div[id^="comment-content"] {
+    width: 100%;
+  }
+
+  .forum-comments-body script + div,
+  .forum-comments-body > div {
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 600px) {
+    .forum-comments-head {
+      padding: 16px 12px 12px;
+    }
+
+    .forum-comments-body {
+      padding: 0;
+    }
+  }
+</style>

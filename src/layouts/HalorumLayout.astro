@@ -1,0 +1,50 @@
+---
+import CategoryNav from "../components/CategoryNav.astro";
+import FixedTool from "../components/FixedTool.astro";
+import HeadAssets from "../components/HeadAssets.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+
+interface Props {
+  page: "home" | "post" | "page" | "category" | "archive" | "links" | "notification" | "404";
+  titleExpression: string;
+  descriptionExpression?: string;
+  contentClass: string;
+  showCategoryNav?: boolean;
+  showFooterInRight?: boolean;
+  detailTools?: boolean;
+}
+
+const {
+  page,
+  titleExpression,
+  descriptionExpression,
+  contentClass,
+  showCategoryNav = false,
+  showFooterInRight = false,
+  detailTools = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <HeadAssets page={page} titleExpression={titleExpression} descriptionExpression={descriptionExpression} />
+    <slot name="head" />
+  </head>
+  <body>
+    <h1 style="display:none;" th:text="${site.title}"></h1>
+    <SiteHeader />
+    {showCategoryNav && <CategoryNav />}
+    <main class:list={["main", !showCategoryNav && "no-nav"]} role="main">
+      <div class="container">
+        <div class:list={["main-content", contentClass]}>
+          <slot />
+          {showFooterInRight ? null : <SiteFooter />}
+        </div>
+      </div>
+    </main>
+    <FixedTool detail={detailTools} />
+    <script th:if="${!#strings.isEmpty(theme.config.custom.customJs)}" th:utext="${theme.config.custom.customJs}"></script>
+  </body>
+</html>

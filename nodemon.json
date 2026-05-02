@@ -1,0 +1,4 @@
+{
+  "watch": ["src", "public", "theme.yaml", "settings.yaml"],
+  "ext": "astro,html,css,js,yaml"
+}

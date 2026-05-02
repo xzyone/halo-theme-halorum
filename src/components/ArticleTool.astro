@@ -1,0 +1,125 @@
+﻿---
+interface Props {
+  kind: "Post" | "SinglePage";
+}
+
+const { kind } = Astro.props;
+const commentBadge = kind === "Post" ? "badge=${post.stats.comment ?: 0}" : "badge=0";
+const likeBadge = kind === "Post" ? "badge=${post.stats.upvote ?: 0}" : "badge=0";
+const shareTitle = kind === "Post" ? "${post.spec.title}" : "${singlePage.spec.title}";
+const qqShareHref = "@{|https://connect.qq.com/widget/shareqq/index.html?url=${site.url}&title=" + shareTitle + "|}";
+const weiboShareHref = "@{|https://service.weibo.com/share/share.php?url=${site.url}&title=" + shareTitle + "|}";
+---
+
+<div class="article-tool">
+  <div class="article-tool-content">
+    <div
+      class="article-tool-item badge article-like-btn immersion-hide"
+      th:attr={likeBadge}
+      th:data-name={kind === "Post" ? "${post.metadata.name}" : ""}
+      data-plural="posts"
+      data-group="content.halo.run"
+      title="点赞"
+    >
+      <i class="halorum-icon halorum-icon-like-fill article-tool-item-icon"></i>
+    </div>
+    <a class="article-tool-item badge immersion-hide" href="#comments" target="_self" th:attr={commentBadge} title="评论">
+      <i class="halorum-icon halorum-icon-message-fill article-tool-item-icon"></i>
+    </a>
+    <div class="article-tool-item share immersion-hide" title="分享">
+      <i class="halorum-icon halorum-icon-fenxiang article-tool-item-icon"></i>
+      <div class="article-tool-share">
+        <div class="article-tool-share-item wx">
+          <i class="halorum-icon halorum-icon-wechat-fill article-tool-share-item-icon"></i>
+          <div class="article-tool-share-item-title">微信</div>
+          <div class="article-tool-wx-qrcode">
+            <img class="article-tool-wx-qrcode-img" src="" alt="微信分享" />
+            <div class="article-tool-wx-qrcode-info">微信扫码分享</div>
+          </div>
+        </div>
+        <a class="article-tool-share-item" th:href={qqShareHref} target="_blank" title="QQ分享">
+          <i class="halorum-icon halorum-icon-QQ article-tool-share-item-icon"></i>
+          <div class="article-tool-share-item-title">QQ</div>
+        </a>
+        <a class="article-tool-share-item" th:href={weiboShareHref} target="_blank" title="新浪微博">
+          <i class="halorum-icon halorum-icon-weibo article-tool-share-item-icon"></i>
+          <div class="article-tool-share-item-title">新浪微博</div>
+        </a>
+      </div>
+    </div>
+    <div class="article-tool-dividing immersion-hide"></div>
+    <div class="article-tool-item immersion-mode-btn" title="沉浸模式">
+      <i class="halorum-icon halorum-icon-bg-fullscreen article-tool-item-icon"></i>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const btn = document.querySelector(".article-like-btn");
+    if (!btn || btn.dataset.halorumLikeBound === "true") return;
+    btn.dataset.halorumLikeBound = "true";
+
+    const storageKey = "halorum_upvoted_posts";
+    const getUpvoted = () => {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey) || "[]");
+      } catch (error) {
+        return [];
+      }
+    };
+    const setUpvoted = (items) => localStorage.setItem(storageKey, JSON.stringify(items));
+    const name = btn.dataset.name;
+    if (!name) return;
+
+    if (getUpvoted().includes(name)) {
+      btn.classList.add("active");
+    }
+
+    const readCount = () => Number(btn.getAttribute("badge") || btn.dataset.badge || "0") || 0;
+    const writeCount = (count) => {
+      btn.setAttribute("badge", String(count));
+      btn.dataset.badge = String(count);
+    };
+
+    btn.addEventListener("click", async () => {
+      const upvoted = getUpvoted();
+      if (upvoted.includes(name) || btn.classList.contains("loading")) return;
+      btn.classList.add("loading");
+      try {
+        const response = await fetch("/apis/api.halo.run/v1alpha1/trackers/upvote", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            plural: btn.dataset.plural || "posts",
+            group: btn.dataset.group || "content.halo.run",
+          }),
+        });
+        if (!response.ok) throw new Error("upvote failed");
+        upvoted.push(name);
+        setUpvoted(upvoted);
+        writeCount(readCount() + 1);
+        btn.classList.add("active");
+      } catch (error) {
+        console.warn("[Halorum] upvote failed", error);
+      } finally {
+        btn.classList.remove("loading");
+      }
+    });
+  })();
+</script>
+
+<style is:inline>
+  .article-like-btn.active,
+  .article-like-btn.loading {
+    color: var(--halorum-header-login-btn-color);
+  }
+
+  .article-like-btn.loading {
+    opacity: 0.72;
+    pointer-events: none;
+  }
+</style>
+

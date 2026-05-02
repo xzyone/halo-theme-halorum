@@ -1,0 +1,306 @@
+---
+import SiteFooter from "./SiteFooter.astro";
+---
+
+<div class="main-right">
+  <section class="recent-comments">
+    <div class="recent-comments-content">
+      <div class="recent-comments-head">
+        <i class="halorum-icon halorum-icon-file-text recent-comments-head-icon"></i>
+        <h3 class="recent-comments-title">最新文章</h3>
+      </div>
+      <div class="recent-comments-body">
+        <div
+          class="recent-comments-list"
+          th:with="latestPosts=${postFinder.list(1, #conversions.convert(theme.config.sidebar.latestPostCount ?: 6, 'java.lang.Integer')).items}"
+        >
+          <a
+            class="recent-comments-list-item"
+            th:each="item : ${latestPosts}"
+            th:href="@{${item.status.permalink}}"
+            th:title="${item.spec.title}"
+          >
+            <div class="recent-comments-list-item-avatar">
+              <img th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" th:alt="${item.owner.displayName ?: site.title}" />
+            </div>
+            <div class="recent-comments-list-item-content">
+              <div class="recent-comments-list-item-title" th:text="${item.spec.title}"></div>
+              <div class="recent-comments-list-item-msg" th:text="${item.status.excerpt}"></div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="halorum-rank home-card">
+    <div class="halorum-rank-content">
+      <div class="halorum-rank-head">
+        <i class="halorum-icon halorum-icon-hot halorum-rank-head-icon"></i>
+        <h3 class="halorum-rank-title">文章榜</h3>
+      </div>
+      <div class="halorum-rank-body halorum-post-rank">
+        <div class="halorum-rank-empty">正在统计</div>
+      </div>
+    </div>
+  </section>
+  <section class="halorum-rank home-card">
+    <div class="halorum-rank-content">
+      <div class="halorum-rank-head">
+        <i class="halorum-icon halorum-icon-user halorum-rank-head-icon"></i>
+        <h3 class="halorum-rank-title">作者榜</h3>
+      </div>
+      <div class="halorum-rank-body halorum-author-rank">
+        <div class="halorum-rank-empty">正在统计</div>
+      </div>
+    </div>
+  </section>
+  <section class="halorum-rank home-card">
+    <div class="halorum-rank-content">
+      <div class="halorum-rank-head">
+        <i class="halorum-icon halorum-icon-tag halorum-rank-head-icon"></i>
+        <h3 class="halorum-rank-title">标签榜</h3>
+      </div>
+      <div class="halorum-rank-body halorum-tag-rank">
+        <div class="halorum-rank-empty">正在统计</div>
+      </div>
+    </div>
+  </section>
+  <div class="halorum-rank-source" hidden th:with="rankPosts=${postFinder.list(1, 50).items}">
+    <div
+      class="halorum-rank-source-item"
+      th:each="item : ${rankPosts}"
+      th:data-title="${item.spec.title}"
+      th:data-url="${item.status.permalink}"
+      th:data-visit="${item.stats.visit ?: 0}"
+      th:data-owner="${item.owner.displayName ?: site.title}"
+      th:data-owner-url="@{/}"
+      th:data-published="${#dates.format(item.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+    >
+      <th:block th:if="${item.tags != null and !item.tags.isEmpty()}">
+        <span
+          class="halorum-rank-source-tag"
+          th:each="tag : ${item.tags}"
+          th:data-name="${tag.spec.displayName}"
+          th:data-url="${tag.status.permalink}"
+        ></span>
+      </th:block>
+    </div>
+  </div>
+  <section class="recommended-article home-card" th:if="${theme.config.sidebar.showCategoryCards != false}">
+    <div
+      class="recommended-article-content"
+      th:with="selectedCategories=${theme.config.sidebar.categoryCardCategories}, cardCategories=${#lists.isEmpty(selectedCategories) ? categoryFinder.listAll() : categoryFinder.getByNames(selectedCategories)}, cardLimit=${#conversions.convert(theme.config.sidebar.categoryCardLimit ?: 2, 'java.lang.Integer')}"
+    >
+      <a
+        class="recommended-article-item-link"
+        th:each="category, iter : ${cardCategories}"
+        th:if="${not #lists.isEmpty(selectedCategories) or iter.index < cardLimit}"
+        th:href="@{${category.status.permalink}}"
+        th:title="${category.spec.displayName}"
+      >
+        <div class="recommended-article-item">
+          <img
+            class="recommended-article-item-img"
+            th:src="@{/assets/theme/static/images/home_recommended_article_loading.gif}"
+            th:data-src="${#strings.isEmpty(theme.config.sidebar.defaultCategoryImage) ? '/themes/halorum/assets/theme/static/images/home_recommended_article_empty.jpg' : theme.config.sidebar.defaultCategoryImage}"
+            th:alt="${category.spec.displayName}"
+          />
+          <span class="recommended-article-item-tag" th:text="${category.spec.displayName}"></span>
+        </div>
+      </a>
+    </div>
+  </section>
+  <SiteFooter />
+</div>
+
+<style is:inline>
+  .halorum-rank {
+    margin-bottom: 20px;
+  }
+
+  .halorum-rank-content {
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--halorum-recent-comments-bg);
+  }
+
+  .halorum-rank-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+  }
+
+  .halorum-rank-title {
+    margin: 0;
+    padding: 16px 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+    color: var(--halorum-recent-comments-title-color);
+    border-bottom: 1px solid var(--halorum-recent-comments-border);
+    flex: 1;
+  }
+
+  .halorum-rank-head-icon {
+    color: var(--halorum-header-login-btn-color);
+    font-size: 16px;
+  }
+
+  .halorum-rank-body {
+    padding: 8px 0 12px;
+  }
+
+  .halorum-rank-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 20px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .halorum-rank-item:hover {
+    background: var(--halorum-recent-comments-list-item-bg-hover);
+  }
+
+  .halorum-rank-index {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border-radius: 4px;
+    background: var(--halorum-article-relevant-info-a-bg1);
+    color: var(--halorum-header-login-btn-color);
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .halorum-rank-item:nth-child(1) .halorum-rank-index,
+  .halorum-rank-item:nth-child(2) .halorum-rank-index,
+  .halorum-rank-item:nth-child(3) .halorum-rank-index {
+    color: #fff;
+    background: var(--halorum-header-login-btn-color);
+  }
+
+  .halorum-rank-item-main {
+    display: block;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .halorum-rank-item-title {
+    display: block;
+    color: var(--halorum-recent-comments-list-item-title-color);
+    font-size: 14px;
+    line-height: 21px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .halorum-rank-item-meta {
+    display: block;
+    margin-top: 3px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+    font-size: 12px;
+    line-height: 18px;
+  }
+
+  .halorum-rank-empty {
+    padding: 12px 20px;
+    color: var(--halorum-recent-comments-list-item-msg-color);
+    font-size: 13px;
+    text-align: center;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const source = Array.from(document.querySelectorAll(".halorum-rank-source-item")).map((item) => {
+      const tags = Array.from(item.querySelectorAll(".halorum-rank-source-tag")).map((tag) => ({
+        name: tag.dataset.name || "",
+        url: tag.dataset.url || "#",
+      }));
+      return {
+        title: item.dataset.title || "",
+        url: item.dataset.url || "#",
+        visit: Number(item.dataset.visit || "0") || 0,
+        owner: item.dataset.owner || "匿名用户",
+        ownerUrl: item.dataset.ownerUrl || "#",
+        published: item.dataset.published ? new Date(item.dataset.published) : null,
+        tags,
+      };
+    });
+    const recentLimit = Date.now() - 3 * 24 * 60 * 60 * 1000;
+    const recentPosts = source.filter((item) => item.published && item.published.getTime() >= recentLimit);
+    const recentOrAll = recentPosts.length ? recentPosts : source;
+    const escapeHtml = (value) =>
+      String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+    const render = (selector, rows, metaLabel) => {
+      const container = document.querySelector(selector);
+      if (!container) return;
+      if (!rows.length) {
+        container.innerHTML = '<div class="halorum-rank-empty">暂无数据</div>';
+        return;
+      }
+      container.innerHTML = rows
+        .slice(0, 5)
+        .map(
+          (item, index) =>
+            `<a class="halorum-rank-item" href="${escapeHtml(item.url)}" title="${escapeHtml(item.title)}">
+              <span class="halorum-rank-index">${index + 1}</span>
+              <span class="halorum-rank-item-main">
+                <span class="halorum-rank-item-title">${escapeHtml(item.title)}</span>
+                <span class="halorum-rank-item-meta">${escapeHtml(item.meta)} ${metaLabel}</span>
+              </span>
+            </a>`
+        )
+        .join("");
+    };
+
+    render(
+      ".halorum-post-rank",
+      recentOrAll
+        .slice()
+        .sort((a, b) => b.visit - a.visit)
+        .map((item) => ({ title: item.title, url: item.url, meta: item.visit })),
+      "浏览"
+    );
+
+    const authors = new Map();
+    source.forEach((item) => {
+      const key = item.owner;
+      const row = authors.get(key) || { title: key, url: item.ownerUrl, count: 0 };
+      row.count += 1;
+      authors.set(key, row);
+    });
+    render(
+      ".halorum-author-rank",
+      Array.from(authors.values())
+        .sort((a, b) => b.count - a.count)
+        .map((item) => ({ title: item.title, url: item.url, meta: item.count })),
+      "篇文章"
+    );
+
+    const tags = new Map();
+    recentOrAll.forEach((post) => {
+      post.tags.forEach((tag) => {
+        if (!tag.name) return;
+      const row = tags.get(tag.name) || { title: tag.name, url: tag.url, visit: 0 };
+        row.visit += post.visit;
+        tags.set(tag.name, row);
+      });
+    });
+    render(
+      ".halorum-tag-rank",
+      Array.from(tags.values())
+        .sort((a, b) => b.visit - a.visit)
+        .map((item) => ({ title: item.title.startsWith("#") ? item.title : "#" + item.title, url: item.url, meta: item.visit })),
+      "浏览"
+    );
+  })();
+</script>
+

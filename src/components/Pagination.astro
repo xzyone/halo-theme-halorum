@@ -1,0 +1,84 @@
+<nav th:if="${posts.hasPrevious() || posts.hasNext()}" class="pagination-button" aria-label="分页">
+  <span class="pagination-button-slot prev-slot">
+    <a th:if="${posts.hasPrevious()}" class="prev" th:href="${posts.page le 2} ? @{/} : @{|/page/${posts.page - 1}|}">上一页</a>
+    <span th:unless="${posts.hasPrevious()}" class="pagination-button-edge">首页</span>
+  </span>
+  <span class="active" th:text="|${posts.page} / ${posts.totalPages}|"></span>
+  <span class="pagination-button-slot next-slot">
+    <a th:if="${posts.hasNext()}" class="next" th:href="@{|/page/${posts.page + 1}|}">下一页</a>
+    <span th:unless="${posts.hasNext()}" class="pagination-button-edge">尾页</span>
+  </span>
+</nav>
+<div th:if="${posts.totalPages le 1}" class="pagination-button-no-more">没有更多了</div>
+
+<style is:inline>
+  .pagination-button {
+    display: grid;
+    grid-template-columns: 76px 76px 76px;
+    align-items: center;
+    justify-content: center;
+    column-gap: 8px;
+    margin: 16px 0 20px;
+  }
+
+  .pagination-button-slot {
+    display: flex;
+    width: 76px;
+  }
+
+  .prev-slot {
+    justify-content: flex-end;
+  }
+
+  .next-slot {
+    justify-content: flex-start;
+  }
+
+  .pagination-button a,
+  .pagination-button .pagination-button-edge,
+  .pagination-button .active {
+    display: inline-flex;
+    flex: 0 0 76px;
+    width: 76px;
+    min-width: 76px;
+    max-width: 76px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0 12px;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--halorum-pagination-button-item-color);
+    text-decoration: none;
+    white-space: nowrap;
+    word-break: keep-all;
+    word-wrap: normal;
+    overflow-wrap: normal;
+    background: var(--halorum-pagination-button-item-bg);
+    border: 1px solid transparent;
+    border-radius: 4px;
+  }
+
+  .pagination-button-edge {
+    color: var(--halorum-article-pagination-no-more-color);
+    background: var(--halorum-pagination-button-item-bg);
+  }
+
+  .pagination-button a:hover {
+    color: var(--halorum-pagination-button-item-color-hover);
+    background: var(--halorum-pagination-button-item-bg-hover);
+  }
+
+  .pagination-button .active {
+    color: var(--halorum-pagination-button-item-color-hover);
+    background: var(--halorum-pagination-button-item-bg-hover);
+  }
+
+  .pagination-button-no-more {
+    margin: 16px 0 20px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--halorum-article-pagination-no-more-color);
+  }
+</style>

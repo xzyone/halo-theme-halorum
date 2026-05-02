@@ -1,0 +1,31 @@
+---
+import ArticleContent from "../components/ArticleContent.astro";
+import ArticleRelevantInfo from "../components/ArticleRelevantInfo.astro";
+import ArticleTool from "../components/ArticleTool.astro";
+import Copyright from "../components/Copyright.astro";
+import ForumComments from "../components/ForumComments.astro";
+import MobileDirectoryTree from "../components/MobileDirectoryTree.astro";
+import PostSidebar from "../components/PostSidebar.astro";
+import HalorumLayout from "../layouts/HalorumLayout.astro";
+---
+
+<HalorumLayout
+  page="post"
+  titleExpression="|${post.spec.title} - ${site.title}|"
+  descriptionExpression="${post.status.excerpt ?: site.subtitle}"
+  contentClass="post-content"
+  detailTools
+  showFooterInRight
+>
+  <div class="main-left">
+    <ArticleTool kind="Post" />
+    <div class="article-content-wrapper">
+      <ArticleContent kind="Post" />
+      <ArticleRelevantInfo />
+      <Copyright />
+    </div>
+    <ForumComments kind="Post" nameExpression="${post.metadata.name}" />
+  </div>
+  <PostSidebar />
+  <MobileDirectoryTree />
+</HalorumLayout>

@@ -1,0 +1,19 @@
+﻿apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: halorum
+spec:
+  displayName: Halorum
+  author:
+    name: xzyone
+    website: https://www.kdgq.com
+  description: Halorum theme for Halo with Astro prerendering and forum-style reading.
+  logo: /themes/halorum/assets/theme/static/images/header/mobile-logo.png
+  homepage: https://github.com/xzyone/halo-theme-halorum
+  settingName: halorum-setting
+  configMapName: halorum-configmap
+  version: "0.0.1"
+  requires: ">=2.0.0"
+  license:
+    - name: BSD-3-Clause
+      url: https://opensource.org/license/bsd-3-clause

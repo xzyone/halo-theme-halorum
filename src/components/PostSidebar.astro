@@ -1,0 +1,105 @@
+---
+import SiteFooter from "./SiteFooter.astro";
+---
+
+<div class="main-right">
+  <section class="article-author immersion-hide">
+    <div class="article-author-content" itemscope itemtype="http://schema.org/Person">
+      <div class="article-author-head">
+        <div class="article-author-avatar">
+          <img th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" th:alt="${post.owner.displayName ?: site.title}" />
+        </div>
+        <div class="article-author-info">
+          <div class="article-author-name" itemprop="name" th:text="${post.owner.displayName ?: site.title}"></div>
+          <div class="article-author-group">&#20316;&#32773;</div>
+        </div>
+      </div>
+      <div class="article-author-body">
+        <div class="article-author-item">
+          <i class="halorum-icon halorum-icon-like-fill article-author-item-icon"></i>
+          <span class="article-author-item-text">
+            &#33719;&#24471;&#28857;&#36190; <span th:text="${post.stats.upvote ?: 0}">0</span>
+          </span>
+        </div>
+        <div class="article-author-item">
+          <i class="halorum-icon halorum-icon-eye-fill article-author-item-icon"></i>
+          <span class="article-author-item-text">
+            &#25991;&#31456;&#38405;&#35835; <span th:text="${post.stats.visit ?: 0}">0</span>
+          </span>
+        </div>
+        <div class="article-author-item">
+          <i class="halorum-icon halorum-icon-sync article-author-item-icon"></i>
+          <span class="article-author-item-text">
+            &#21457;&#24067;&#26102;&#38388; <span th:text="${#dates.format(post.spec.publishTime, 'yy-MM-dd HH:mm')}"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="latest-posts immersion-hide" role="complementary">
+    <div class="latest-posts-content">
+      <div class="latest-posts-head">
+        <h3 class="latest-posts-title">&#26368;&#26032;&#25991;&#31456;</h3>
+      </div>
+      <div class="latest-posts-body">
+        <a
+          class="latest-posts-item"
+          th:each="item, iter : ${postFinder.listAll()}"
+          th:if="${iter.index < (theme.config.sidebar.latestPostCount ?: 5)}"
+          th:href="@{${item.status.permalink}}"
+          th:title="${item.spec.title}"
+        >
+          <div class="latest-posts-item-title" th:text="${item.spec.title}"></div>
+          <div class="latest-posts-item-other">
+            <span class="latest-posts-item-other-item" th:text="|${item.stats.upvote ?: 0} 点赞|">0 &#28857;&#36190;</span>
+            <span> &middot; </span>
+            <span class="latest-posts-item-other-item" th:text="|${item.stats.comment ?: 0} 评论|">0 &#35780;&#35770;</span>
+          </div>
+        </a>
+        <div class="latest-posts-empty" th:if="${postFinder.listAll().isEmpty()}">&#26242;&#26080;&#25991;&#31456;</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="post-right-sticky">
+    <section class="directory-tree">
+      <div class="directory-tree-content">
+        <div class="directory-tree-head">
+          <h3 class="directory-tree-title">&#30446;&#24405;</h3>
+        </div>
+        <div class="directory-tree-body">
+          <ul class="directory-tree-list">
+            <div class="directory-tree-list-empty">&#26242;&#26080;&#30446;&#24405;</div>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+  <SiteFooter />
+</div>
+
+<script is:inline>
+  (() => {
+    const markdown = document.querySelector(".article-content-markdown");
+    const list = document.querySelector(".directory-tree-list");
+    if (!markdown || !list) return;
+
+    const headings = Array.from(markdown.querySelectorAll("h2, h3, h4")).filter((heading) => heading.textContent.trim());
+    if (headings.length === 0) return;
+
+    const escapeHtml = (value) =>
+      value.replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
+    list.innerHTML = headings
+      .map((heading, index) => {
+        const depth = Math.min(Number(heading.tagName.slice(1)) - 1, 3);
+        const id = heading.id || "heading-" + (index + 1);
+        heading.id = id;
+        const title = escapeHtml(heading.textContent.trim());
+        return '<li class="directory-tree-list-item depth-' + depth + '"><div class="directory-tree-list-item-link-wrapper"><a class="directory-tree-list-item-link" href="#' + id + '" title="' + title + '">' + title + "</a></div></li>";
+      })
+      .join("");
+  })();
+</script>
+

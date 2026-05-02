@@ -1,0 +1,22 @@
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-item">
+      <a th:href="@{/categories}" target="_self" title="分类">分类</a>
+      <a th:href="@{/tags}" target="_self" title="标签">标签</a>
+      <a th:href="@{/archives}" target="_self" title="归档">归档</a>
+      <a th:href="@{/sitemap.xml}" target="_blank" title="站点地图">站点地图</a>
+    </div>
+    <div class="footer-item" th:text="|版权所有：${site.title}|">版权所有</div>
+    <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.address)}" th:text="|联系地址：${theme.config.basic.address}|"></div>
+    <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.email)}">
+      <span>联系邮箱：</span><a th:href="|mailto:${theme.config.basic.email}|" target="_self" th:text="${theme.config.basic.email}"></a>
+    </div>
+    <div class="footer-item">
+      <a th:href="@{/}" target="_self" th:title="${site.title}" th:text="|© ${#dates.year(#dates.createNow())} ${site.title}|"></a>
+    </div>
+    <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.filing)}" th:text="${theme.config.basic.filing}"></div>
+    <div class="footer-item">
+      Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a>
+    </div>
+  </div>
+</footer>
