@@ -10,6 +10,7 @@ spec:
   description: Halorum theme for Halo with Astro prerendering and forum-style reading.
   logo: /themes/halorum/assets/theme/static/images/header/mobile-logo.png
   homepage: https://github.com/xzyone/halo-theme-halorum
+  issues: https://github.com/xzyone/halo-theme-halorum/issues
   settingName: halorum-setting
   configMapName: halorum-configmap
   version: "0.0.1"
