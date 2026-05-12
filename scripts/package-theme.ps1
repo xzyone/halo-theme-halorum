@@ -4,7 +4,14 @@ Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $themeRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-$zipPath = Join-Path (Split-Path $themeRoot -Parent) "Halorum.zip"
+$distPath = Join-Path $themeRoot "dist"
+$zipFileName = "Halorum.zip"
+$zipPath = Join-Path $distPath $zipFileName
+$legacyZipPath = Join-Path (Split-Path $themeRoot -Parent) $zipFileName
+
+if (-not (Test-Path -LiteralPath $distPath)) {
+  New-Item -ItemType Directory -Path $distPath | Out-Null
+}
 
 if (Test-Path -LiteralPath $zipPath) {
   Remove-Item -LiteralPath $zipPath -Force
@@ -19,6 +26,7 @@ try {
         $_.FullName -notmatch "\\node_modules\\" -and
         $_.FullName -notmatch "\\\.git\\" -and
         $_.FullName -notmatch "\\\.astro\\" -and
+        $_.FullName -notmatch "\\dist\\" -and
         $_.FullName -notmatch "\\\.vscode\\" -and
         $_.FullName -notmatch "\\\.idea\\" -and
         $_.Extension -ne ".zip"
@@ -44,5 +52,7 @@ try {
 } finally {
   $stream.Dispose()
 }
+
+Copy-Item -LiteralPath $zipPath -Destination $legacyZipPath -Force
 
 Write-Output $zipPath
