@@ -47,26 +47,6 @@ pnpm dev
 
 该命令会以 watch 模式持续构建，适合本地调试模板和样式。
 
-## 自动发布
-
-本仓库已集成 Halo 官方推荐的 GitHub Actions 工作流：
-
-- `.github/workflows/ci.yaml`
-  - 在 `push` / `pull_request` 到 `main` 时执行主题 CI。
-- `.github/workflows/cd.yaml`
-  - 在 GitHub Release 发布时自动构建主题，并上传产物到 Release Assets。
-  - 如果已配置 Halo 应用市场参数，还会自动同步发布到应用市场。
-
-如需启用应用市场自动发布，请在 GitHub 仓库中补充以下配置：
-
-1. 在 `Settings -> Secrets and variables -> Actions -> Secrets` 中新增：
-   - `HALO_PAT`
-     这里填写 Halo 官网个人中心创建的个人令牌，并勾选“应用市场开发者 > 版本管理”权限。
-2. 当前仓库已内置应用市场应用 ID：
-   - `app-slsvrqpt`
-
-配置好 `HALO_PAT` 后，CD 工作流会在 GitHub Release 发布时自动同步到 Halo 应用市场。
-
 ## 主题设置
 
 | 分组 | 说明 |
