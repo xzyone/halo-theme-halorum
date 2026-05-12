@@ -10,7 +10,8 @@ jobs:
     uses: halo-sigs/reusable-workflows/.github/workflows/theme-cd.yaml@v3
     permissions:
       contents: write
-    secrets: inherit
+    secrets:
+      halo-pat: ${{ secrets.HALO_PAT }}
     with:
       node-version: 22
       pnpm-version: 10.8.0
