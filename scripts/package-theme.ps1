@@ -23,12 +23,13 @@ try {
   try {
     Get-ChildItem -LiteralPath $themeRoot -Recurse -File -Force |
       Where-Object {
-        $_.FullName -notmatch "\\node_modules\\" -and
-        $_.FullName -notmatch "\\\.git\\" -and
-        $_.FullName -notmatch "\\\.astro\\" -and
-        $_.FullName -notmatch "\\dist\\" -and
-        $_.FullName -notmatch "\\\.vscode\\" -and
-        $_.FullName -notmatch "\\\.idea\\" -and
+        $normalizedPath = $_.FullName.Replace("\", "/")
+        $normalizedPath -notmatch "/node_modules/" -and
+        $normalizedPath -notmatch "/\\.git/" -and
+        $normalizedPath -notmatch "/\\.astro/" -and
+        $normalizedPath -notmatch "/dist/" -and
+        $normalizedPath -notmatch "/\\.vscode/" -and
+        $normalizedPath -notmatch "/\\.idea/" -and
         $_.Extension -ne ".zip"
       } |
       ForEach-Object {
