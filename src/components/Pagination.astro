@@ -81,4 +81,91 @@
     font-size: 14px;
     color: var(--halorum-article-pagination-no-more-color);
   }
+
+  .main-left.is-pjax-loading {
+    opacity: 0.85;
+    transition: opacity 120ms ease;
+  }
 </style>
+
+<script is:inline>
+  (() => {
+    if (window.HalorumPaginationPjaxBound) return;
+    window.HalorumPaginationPjaxBound = true;
+
+    const parser = new DOMParser();
+
+    const initReplacedContent = () => {
+      if (typeof window.HalorumInitHomePagedFeed === "function") {
+        window.HalorumInitHomePagedFeed();
+        return;
+      }
+      if (typeof window.HalorumInitHomeInfiniteFeed === "function") {
+        window.HalorumInitHomeInfiniteFeed();
+        return;
+      }
+      if (typeof window.HalorumInitPostList === "function") {
+        window.HalorumInitPostList();
+      } else if (typeof window.HalorumHydratePostList === "function") {
+        window.HalorumHydratePostList();
+      }
+    };
+
+    const replaceMainLeft = async (url, pushState) => {
+      const currentMainLeft = document.querySelector(".main-left");
+      if (!currentMainLeft) {
+        window.location.href = url;
+        return;
+      }
+
+      currentMainLeft.classList.add("is-pjax-loading");
+
+      try {
+        const response = await fetch(url, {
+          credentials: "include",
+          headers: {
+            "X-Requested-With": "Halorum-PJAX",
+          },
+        });
+        if (!response.ok) throw new Error("Failed to load page");
+
+        const html = await response.text();
+        const doc = parser.parseFromString(html, "text/html");
+        const nextMainLeft = doc.querySelector(".main-left");
+        if (!nextMainLeft) throw new Error("Missing main-left");
+
+        currentMainLeft.replaceWith(document.importNode(nextMainLeft, true));
+        document.title = doc.title;
+
+        if (pushState) {
+          window.history.pushState({ url }, "", url);
+        }
+
+        const main = document.querySelector(".main");
+        const top = (main?.getBoundingClientRect().top || 0) + window.scrollY - 12;
+        window.scrollTo({ top: Math.max(top, 0), behavior: "auto" });
+        initReplacedContent();
+      } catch (error) {
+        window.location.href = url;
+      }
+    };
+
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest(".pagination-button a");
+      if (!link) return;
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const url = link.href;
+      if (!url || new URL(url).origin !== window.location.origin) return;
+
+      event.preventDefault();
+      replaceMainLeft(url, true);
+    });
+
+    window.addEventListener("popstate", () => {
+      if (!document.querySelector(".pagination-button")) return;
+      replaceMainLeft(window.location.href, false);
+    });
+  })();
+</script>

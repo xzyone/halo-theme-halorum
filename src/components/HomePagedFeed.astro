@@ -1,0 +1,55 @@
+---
+import Pagination from "../components/Pagination.astro";
+import PostList from "../components/PostList.astro";
+---
+
+<div class="main-left halorum-home-feed-paged" data-home-feed-mode="paged" th:attr="data-home-page-size=${homePageSize}">
+  <PostList />
+  <th:block
+    th:if="${homePage == 1}"
+    th:with="posts=${postFinder.list({page: 1, size: 50, sort: {'spec.pinned,desc', 'spec.publishTime,desc', 'metadata.creationTimestamp,desc'}})}"
+  >
+    <div class="article-card-reserve" hidden>
+      <PostList mode="reserve" listClass="article-card-reserve-list" />
+    </div>
+  </th:block>
+  <Pagination />
+</div>
+
+<script is:inline>
+  (() => {
+    const initHomePagedFeed = () => {
+      const container = document.querySelector(".halorum-home-feed-paged");
+      const list = container?.querySelector(".article-card-wrap:not(.article-card-reserve-list)");
+      const parsedVisibleLimit = Number(container?.dataset.homePageSize || "15");
+      const visibleLimit = Number.isFinite(parsedVisibleLimit) && parsedVisibleLimit > 0 ? parsedVisibleLimit : 15;
+
+      window.HalorumDisablePostListSort = false;
+
+      window.HalorumApplyHomeVisibleLimit = () => {
+        if (!list) return;
+        Array.from(list.querySelectorAll(":scope > .article-card")).forEach((card, index) => {
+          card.hidden = index >= visibleLimit;
+        });
+      };
+
+      if (typeof window.HalorumInitPostList === "function") {
+        window.HalorumInitPostList();
+      } else if (typeof window.HalorumHydratePostList === "function") {
+        window.HalorumHydratePostList();
+      }
+
+      if (typeof window.HalorumApplyHomeVisibleLimit === "function") {
+        window.HalorumApplyHomeVisibleLimit();
+      }
+    };
+
+    window.HalorumInitHomePagedFeed = initHomePagedFeed;
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initHomePagedFeed, { once: true });
+    } else {
+      initHomePagedFeed();
+    }
+  })();
+</script>

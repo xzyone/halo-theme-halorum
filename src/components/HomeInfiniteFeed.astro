@@ -1,0 +1,153 @@
+---
+import PostList from "../components/PostList.astro";
+---
+
+<div class="main-left halorum-home-feed-infinite" data-home-feed-mode="infinite">
+  <PostList />
+  <div
+    class="halorum-infinite-loader"
+    th:classappend="${posts.hasNext()} ? '' : ' no-more'"
+    th:data-next-url="${posts.hasNext()} ? @{|/page/${posts.page + 1}|} : ''"
+  >
+    <span th:text="${posts.hasNext()} ? '继续浏览' : '没有更多了'">继续浏览</span>
+  </div>
+</div>
+
+<style is:inline>
+  .halorum-infinite-loader {
+    min-height: 42px;
+    margin: 12px 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--halorum-article-pagination-no-more-color);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .halorum-infinite-loader.loading span::after {
+    content: "...";
+  }
+
+  .halorum-infinite-loader.no-more {
+    cursor: default;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const initHomeInfiniteFeed = () => {
+      const container = document.querySelector(".halorum-home-feed-infinite");
+      const loader = container?.querySelector(".halorum-infinite-loader");
+      const list = container?.querySelector(".article-card-wrap:not(.article-card-reserve-list)");
+
+      window.HalorumDisablePostListSort = false;
+      window.HalorumApplyHomeVisibleLimit = null;
+
+      if (typeof window.HalorumInitPostList === "function") {
+        window.HalorumInitPostList();
+      } else if (typeof window.HalorumHydratePostList === "function") {
+        window.HalorumHydratePostList();
+      }
+
+      if (!loader || !list || container.dataset.infiniteBound === "true") return;
+      container.dataset.infiniteBound = "true";
+
+      let nextUrl = loader.dataset.nextUrl || "";
+      let loading = false;
+      let observer = null;
+
+      const scheduleCheck = () => {
+        window.requestAnimationFrame(checkAndLoad);
+        window.setTimeout(checkAndLoad, 120);
+        window.setTimeout(checkAndLoad, 360);
+      };
+
+      const finish = (message) => {
+        const label = loader.querySelector("span");
+        if (label) label.textContent = message;
+        loader.classList.add("no-more");
+        observer?.disconnect();
+        window.removeEventListener("scroll", checkAndLoad);
+        window.removeEventListener("resize", checkAndLoad);
+      };
+
+      const extractCards = (doc) => {
+        const nextList = doc.querySelector(".halorum-home-feed-infinite .article-card-wrap:not(.article-card-reserve-list)");
+        if (!nextList) return [];
+        return Array.from(nextList.querySelectorAll(":scope > .article-card"));
+      };
+
+      const loadNext = async () => {
+        if (loading || !nextUrl) {
+          if (!nextUrl) finish("没有更多了");
+          return;
+        }
+
+        loading = true;
+        loader.classList.add("loading");
+
+        try {
+          const response = await fetch(nextUrl, { credentials: "include" });
+          if (!response.ok) throw new Error("Failed to load next page");
+
+          const html = await response.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const cards = extractCards(doc);
+          window.HalorumDisablePostListSort = true;
+          cards.forEach((card) => list.appendChild(document.importNode(card, true)));
+
+          if (typeof window.HalorumHydratePostList === "function") {
+            window.HalorumHydratePostList();
+          }
+
+          const nextLoader = doc.querySelector(".halorum-home-feed-infinite .halorum-infinite-loader");
+          nextUrl = nextLoader?.dataset.nextUrl || "";
+
+          if (!nextUrl) {
+            finish("没有更多了");
+          } else {
+            scheduleCheck();
+          }
+        } catch (error) {
+          const label = loader.querySelector("span");
+          if (label) label.textContent = "加载失败，点我重试";
+        } finally {
+          loading = false;
+          loader.classList.remove("loading");
+        }
+      };
+
+      const checkAndLoad = () => {
+        if (loading || !nextUrl) return;
+        const scrollRoot = document.scrollingElement || document.documentElement;
+        const distanceToBottom = scrollRoot.scrollHeight - (window.scrollY + window.innerHeight);
+        if (distanceToBottom <= 360) {
+          loadNext();
+        }
+      };
+
+      if ("IntersectionObserver" in window) {
+        observer = new IntersectionObserver((entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            loadNext();
+          }
+        }, { rootMargin: "320px 0px" });
+        observer.observe(loader);
+      }
+
+      loader.addEventListener("click", loadNext);
+      window.addEventListener("scroll", checkAndLoad, { passive: true });
+      window.addEventListener("resize", checkAndLoad);
+      scheduleCheck();
+    };
+
+    window.HalorumInitHomeInfiniteFeed = initHomeInfiniteFeed;
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initHomeInfiniteFeed, { once: true });
+    } else {
+      initHomeInfiniteFeed();
+    }
+  })();
+</script>

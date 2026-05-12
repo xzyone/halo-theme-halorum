@@ -19,6 +19,50 @@
   .header {
     box-shadow: none;
   }
+
+  .main {
+    padding-top: 105px;
+    padding-left: calc(100vw - 100%);
+  }
+
+  .main.no-nav {
+    padding-top: 60px;
+  }
+
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+
+  .main-content {
+    display: flex;
+    padding-top: 20px;
+  }
+
+  .main-left {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .main-right {
+    flex-shrink: 0;
+    width: 300px;
+    margin-left: 20px;
+  }
+
+  .article-card-main-link,
+  .article-card-main-link:visited,
+  .recent-comments-list-item,
+  .recent-comments-list-item:visited {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @media screen and (max-width: 1000px) {
+    .main-right {
+      display: none;
+    }
+  }
 </style><script th:inline="javascript">
   (() => {
     const accentColor = /*[[${theme.config.style.accentColor ?: '#1e80ff'}]]*/ "#1e80ff";
@@ -596,133 +640,270 @@
     });
     loadUser();
   })();
-</script> <nav class="nav"> <div class="nav-container"> <div class="nav-content"> <div class="nav-list"> <a class="nav-list-item" th:href="@{/categories}" target="_self" title="全部分类">全部</a> <a class="nav-list-item" th:each="category : ${categoryFinder.listAll()}" th:href="@{${category.status.permalink}}" target="_self" th:title="${category.spec.displayName}" th:text="${category.spec.displayName}"></a> </div> </div> </div> <div class="nav-secondary-warp"></div> </nav> <main class="main" role="main"> <div class="container"> <div class="main-content category-content">  <div class="main-left"> <div class="category-tips"> <div class="category-tips-content"> <span class="category-tips-name" th:text="${tag.spec.displayName}"></span> <span class="category-tips-count" th:text="|${posts.total} 篇文章|"></span> </div> </div> <div class="article-card-wrap"> <article class="article-card" th:each="post : ${posts.items}" th:data-link="${post.status.permalink}" itemscope itemtype="http://schema.org/BlogPosting"> <a class="article-card-hidden-a" th:href="@{${post.status.permalink}}" itemprop="url" th:text="${post.spec.title}" aria-label="打开文章"></a> <div class="article-card-head"> <span class="article-card-user" itemprop="author"> <span itemprop="name" rel="author" th:text="${post.owner.displayName ?: site.title}"></span> </span> <time class="article-card-time" th:datetime="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}" itemprop="datePublished" th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time> <span class="article-card-category" th:if="${post.categories != null and !post.categories.isEmpty()}"> <a class="article-card-category-link" th:each="category : ${post.categories}" th:href="@{${category.status.permalink}}" target="_self" th:title="${category.spec.displayName}" th:text="${category.spec.displayName}"></a> </span> </div> <div class="article-card-body"> <div class="article-card-main"> <a class="article-card-main-link" th:href="@{${post.status.permalink}}" target="_self" th:title="${post.spec.title}"> <h2 class="article-card-title" itemprop="name headline" th:text="${post.spec.title}"></h2> <p class="article-card-desc" itemprop="articleBody" th:text="${post.status.excerpt}"></p> </a> <div class="article-card-tags" th:if="${post.tags != null and !post.tags.isEmpty()}"> <a class="article-card-tag" th:each="tag, iter : ${post.tags}" th:if="${iter.index < 3}" th:href="@{${tag.status.permalink}}" target="_self" th:title="${tag.spec.displayName}" th:text="${tag.spec.displayName}"></a> </div> </div> <div class="article-card-footer"> <div class="article-card-footer-left" itemprop="interactionCount"> <span class="article-card-footer-item"> <i class="halorum-icon halorum-icon-eye article-card-footer-item-icon"></i> <span class="article-card-footer-count" th:attr="data-count=${post.stats.visit ?: 0}" th:text="${post.stats.visit ?: 0}">0</span> </span> <span class="article-card-footer-item"> <i class="halorum-icon halorum-icon-like article-card-footer-item-icon"></i> <span class="article-card-footer-count" th:attr="data-count=${post.stats.upvote ?: 0}" th:text="${post.stats.upvote ?: 0}">0</span> </span> <a class="article-card-footer-item comments" th:href="@{|${post.status.permalink}#comments|}" target="_self" title="文章评论"> <i class="halorum-icon halorum-icon-message article-card-footer-item-icon"></i> <span class="article-card-footer-count" th:attr="data-count=${post.stats.comment ?: 0}" th:text="${post.stats.comment ?: 0}">0</span> </a> </div> </div> <div class="article-card-thumb" th:unless="${#strings.isEmpty(post.spec.cover)}"> <img class="article-card-thumb-img" th:src="@{/assets/theme/static/images/loading.gif}" th:data-src="${post.spec.cover}" th:data-error="@{/assets/theme/static/images/loading_error.gif}" th:alt="${post.spec.title}"> </div> </div> </article> </div> <div th:if="${posts.total == 0}" class="article-empty"> <div class="article-empty-content"> <span>列表为空</span> </div> </div> <style>
-  .article-card {
-    position: relative;
-  }
+</script> <nav class="nav"> <div class="nav-container"> <div class="nav-content"> <div class="nav-list"> <a class="nav-list-item" th:href="@{/categories}" target="_self" title="全部分类">全部</a> <a class="nav-list-item" th:each="category : ${categoryFinder.listAll()}" th:href="@{${category.status.permalink}}" target="_self" th:title="${category.spec.displayName}" th:text="${category.spec.displayName}"></a> </div> </div> </div> <div class="nav-secondary-warp"></div> </nav> <main class="main" role="main"> <div class="container"> <div class="main-content category-content">  <div class="main-left"> <div class="category-tips"> <div class="category-tips-content"> <span class="category-tips-name" th:text="${tag.spec.displayName}"></span> <span class="category-tips-count" th:text="|${posts.total} 篇文章|"></span> </div> </div> <div class="article-card-wrap"> <article class="article-card" th:each="post : ${posts.items}" th:data-link="${post.status.permalink}" th:data-name="${post.metadata.name}" th:data-pinned="${post.spec.pinned}" th:data-published="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}" th:data-comment-count="${post.stats.comment ?: 0}" itemscope itemtype="http://schema.org/BlogPosting"> <a class="article-card-hidden-a" th:href="@{${post.status.permalink}}" itemprop="url" th:text="${post.spec.title}" aria-label="打开文章"></a> <div class="article-card-head"> <span class="article-card-user" itemprop="author"> <span itemprop="name" rel="author" th:text="${post.owner.displayName ?: site.title}"></span> </span> <time class="article-card-time" th:datetime="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}" itemprop="datePublished" th:text="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"></time> <span class="article-card-category" th:if="${post.categories != null and !post.categories.isEmpty()}"> <a class="article-card-category-link" th:each="category : ${post.categories}" th:href="@{${category.status.permalink}}" target="_self" th:title="${category.spec.displayName}" th:text="${category.spec.displayName}"></a> </span> </div> <div class="article-card-body"> <div class="article-card-main"> <a class="article-card-main-link" th:href="@{${post.status.permalink}}" target="_self" th:title="${post.spec.title}"> <h2 class="article-card-title" itemprop="name headline"> <span class="article-card-sticky-tag" th:if="${post.spec.pinned}">置顶</span> <span th:text="${post.spec.title}"></span> </h2> <p class="article-card-desc" itemprop="articleBody" th:text="${post.status.excerpt}"></p> </a> <div class="article-card-tags" th:if="${post.tags != null and !post.tags.isEmpty()}"> <a class="article-card-tag" th:each="tag, iter : ${post.tags}" th:if="${iter.index < 3}" th:href="@{${tag.status.permalink}}" target="_self" th:title="${tag.spec.displayName}" th:text="${tag.spec.displayName}"></a> </div> </div> <div class="article-card-footer"> <div class="article-card-footer-left" itemprop="interactionCount"> <span class="article-card-footer-item"> <i class="halorum-icon halorum-icon-eye article-card-footer-item-icon"></i> <span class="article-card-footer-count" th:attr="data-count=${post.stats.visit ?: 0}" th:text="${post.stats.visit ?: 0}">0</span> </span> <span class="article-card-footer-item"> <i class="halorum-icon halorum-icon-like article-card-footer-item-icon"></i> <span class="article-card-footer-count" th:attr="data-count=${post.stats.upvote ?: 0}" th:text="${post.stats.upvote ?: 0}">0</span> </span> <a class="article-card-footer-item comments" th:href="@{|${post.status.permalink}#comments|}" target="_self" title="文章评论"> <i class="halorum-icon halorum-icon-message article-card-footer-item-icon"></i> <span class="article-card-footer-count" th:attr="data-count=${post.stats.comment ?: 0}" th:text="${post.stats.comment ?: 0}">0</span> </a> </div> </div> <div class="article-card-thumb" th:unless="${#strings.isEmpty(post.spec.cover)}"> <img class="article-card-thumb-img" th:src="@{/assets/theme/static/images/loading.gif}" th:data-src="${post.spec.cover}" th:data-error="@{/assets/theme/static/images/loading_error.gif}" th:alt="${post.spec.title}"> </div> </div> </article> </div> <div th:if="${posts.total == 0}" class="article-empty"> <div class="article-empty-content"> <span>列表为空</span> </div> </div> <style>
+    .article-card {
+      position: relative;
+    }
 
-  .article-card-main-link {
-    display: block;
-    width: 100%;
-    color: inherit;
-    text-decoration: none;
-  }
+    .article-card-main-link {
+      display: block;
+      width: 100%;
+      color: inherit;
+      text-decoration: none;
+    }
 
-  .article-card-main {
-    min-width: 0;
-    flex: 1 1 auto;
-    padding-right: 16px;
-  }
-
-  .article-card-title {
-    min-height: 24px;
-  }
-
-  .article-card-desc {
-    min-height: 44px;
-    margin-bottom: 10px;
-  }
-
-  .article-card-tags {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 18px;
-    overflow: hidden;
-  }
-
-  .article-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 132px;
-    margin-left: auto;
-    min-height: 24px;
-    flex: 0 0 auto;
-  }
-
-  .article-card-footer-left {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-shrink: 0;
-  }
-
-  .article-card-footer-item {
-    display: inline-grid;
-    grid-template-columns: 13px 24px;
-    align-items: center;
-    column-gap: 3px;
-    width: 40px;
-    white-space: nowrap;
-  }
-
-  .article-card-footer-item + .article-card-footer-item {
-    margin-left: 0;
-  }
-
-  .article-card-footer-item-icon {
-    display: inline-flex;
-    justify-content: center;
-    width: 13px;
-  }
-
-  .article-card-footer-count {
-    min-width: 0;
-    text-align: left;
-  }
-
-  @media screen and (max-width: 720px) {
     .article-card-main {
-      padding-right: 10px;
+      min-width: 0;
+      flex: 1 1 auto;
+      padding-right: 16px;
+    }
+
+    .article-card-title {
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .article-card-desc {
+      min-height: 44px;
+      margin-bottom: 10px;
+    }
+
+    .article-card-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 18px;
+      overflow: hidden;
     }
 
     .article-card-footer {
-      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 132px;
+      margin-left: auto;
+      min-height: 24px;
+      flex: 0 0 auto;
     }
-  }
 
-  .article-card-hidden-a {
-    display: block;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    overflow: hidden;
-    text-indent: -9999px;
-    white-space: nowrap;
-  }
+    .article-card-footer-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
 
-  .article-card-category,
-  .article-card-footer,
-  .article-card-tags,
-  .article-card-tag,
-  .article-card-main-link {
-    position: relative;
-    z-index: 2;
-  }
+    .article-card-footer-item {
+      display: inline-grid;
+      grid-template-columns: 13px 24px;
+      align-items: center;
+      column-gap: 3px;
+      width: 40px;
+      white-space: nowrap;
+    }
 
-  .article-card-main-link:active {
-    opacity: 0.86;
-  }
-</style> <script>
-  (() => {
-    const formatCount = (value) => {
-      const count = Number(value);
-      if (!Number.isFinite(count) || count < 1000) {
-        return String(Number.isFinite(count) ? count : 0);
+    .article-card-footer-item + .article-card-footer-item {
+      margin-left: 0;
+    }
+
+    .article-card-footer-item-icon {
+      display: inline-flex;
+      justify-content: center;
+      width: 13px;
+    }
+
+    .article-card-footer-count {
+      min-width: 0;
+      text-align: left;
+    }
+
+    @media screen and (max-width: 720px) {
+      .article-card-main {
+        padding-right: 10px;
       }
-      const kilo = count / 1000;
-      if (kilo < 10) {
-        return `${kilo.toFixed(1).replace(/\.0$/, '')}k`;
-      }
-      return `${Math.round(kilo)}k`;
-    };
 
-    document.querySelectorAll('.article-card-footer-count[data-count]').forEach((item) => {
-      item.textContent = formatCount(item.dataset.count);
-    });
-  })();
-</script> <nav th:if="${posts.hasPrevious() || posts.hasNext()}" class="pagination-button" aria-label="分页"> <span class="pagination-button-slot prev-slot"> <a th:if="${posts.hasPrevious()}" class="prev" th:href="${posts.page le 2} ? @{/} : @{|/page/${posts.page - 1}|}">上一页</a> <span th:unless="${posts.hasPrevious()}" class="pagination-button-edge">首页</span> </span> <span class="active" th:text="|${posts.page} / ${posts.totalPages}|"></span> <span class="pagination-button-slot next-slot"> <a th:if="${posts.hasNext()}" class="next" th:href="@{|/page/${posts.page + 1}|}">下一页</a> <span th:unless="${posts.hasNext()}" class="pagination-button-edge">尾页</span> </span> </nav> <div th:if="${posts.totalPages le 1}" class="pagination-button-no-more">没有更多了</div> <style>
+      .article-card-footer {
+        width: auto;
+      }
+    }
+
+    .article-card-hidden-a {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      text-indent: -9999px;
+      white-space: nowrap;
+    }
+
+    .article-card-category,
+    .article-card-footer,
+    .article-card-tags,
+    .article-card-tag,
+    .article-card-main-link,
+    .article-card-sticky-tag {
+      position: relative;
+      z-index: 2;
+    }
+
+    .article-card-sticky-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: var(--halorum-article-card-sticky-tag-color);
+      background: var(--halorum-article-card-sticky-tag-bg);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .article-card-main-link:active {
+      opacity: 0.86;
+    }
+  </style> <script>
+    (() => {
+      const COMMENT_GROUP = "content.halo.run";
+      const COMMENT_VERSION = "v1alpha1";
+      const COMMENT_KIND = "Post";
+
+      const formatCount = (value) => {
+        const count = Number(value);
+        if (!Number.isFinite(count) || count < 1000) {
+          return String(Number.isFinite(count) ? count : 0);
+        }
+        const kilo = count / 1000;
+        if (kilo < 10) {
+          return `${kilo.toFixed(1).replace(/\.0$/, "")}k`;
+        }
+        return `${Math.round(kilo)}k`;
+      };
+
+      const parseTime = (value) => {
+        const timestamp = Date.parse(value || "");
+        return Number.isFinite(timestamp) ? timestamp : 0;
+      };
+
+      const isSortDisabled = () => window.HalorumDisablePostListSort === true;
+      const getActivityTime = (card) => Number(card.dataset.activityTime || parseTime(card.dataset.published) || 0);
+      const getPinnedWeight = (card) => (card.dataset.pinned === "true" ? 1 : 0);
+
+      const mergeReserveCards = () => {
+        const mainList = document.querySelector(".article-card-wrap:not(.article-card-reserve-list)");
+        const reserveList = document.querySelector(".article-card-reserve-list");
+        if (!mainList || !reserveList) return;
+
+        const existing = new Set(Array.from(mainList.querySelectorAll(":scope > .article-card")).map((card) => card.dataset.name || ""));
+        Array.from(reserveList.querySelectorAll(":scope > .article-card")).forEach((card) => {
+          const name = card.dataset.name || "";
+          if (name && existing.has(name)) return;
+          existing.add(name);
+          mainList.appendChild(card);
+        });
+      };
+
+      const sortPostLists = () => {
+        if (isSortDisabled()) return;
+        mergeReserveCards();
+        document.querySelectorAll(".article-card-wrap").forEach((list) => {
+          const cards = Array.from(list.querySelectorAll(":scope > .article-card"));
+          cards
+            .sort((left, right) => {
+              const pinnedDelta = getPinnedWeight(right) - getPinnedWeight(left);
+              if (pinnedDelta !== 0) return pinnedDelta;
+              return getActivityTime(right) - getActivityTime(left);
+            })
+            .forEach((card) => list.appendChild(card));
+        });
+        if (typeof window.HalorumApplyHomeVisibleLimit === "function") {
+          window.HalorumApplyHomeVisibleLimit();
+        }
+      };
+
+      const hydratePostList = () => {
+        document.querySelectorAll(".article-card-footer-count[data-count]").forEach((item) => {
+          item.textContent = formatCount(item.dataset.count);
+        });
+
+        document.querySelectorAll(".article-card").forEach((card) => {
+          if (!card.dataset.activityTime) {
+            card.dataset.activityTime = String(parseTime(card.dataset.published));
+          }
+        });
+
+        sortPostLists();
+      };
+
+      const collectLatestCommentTime = (payload) => {
+        const items = Array.isArray(payload?.items) ? payload.items : [];
+        return items.reduce((latest, comment) => {
+          const replyItems = Array.isArray(comment?.replies?.items) ? comment.replies.items : [];
+          const commentTime = Math.max(
+            parseTime(comment?.metadata?.creationTimestamp),
+            parseTime(comment?.spec?.creationTime),
+            parseTime(comment?.status?.lastReplyTime)
+          );
+          const replyTime = replyItems.reduce((replyLatest, reply) => {
+            return Math.max(replyLatest, parseTime(reply?.metadata?.creationTimestamp), parseTime(reply?.spec?.creationTime));
+          }, 0);
+          return Math.max(latest, commentTime, replyTime);
+        }, 0);
+      };
+
+      const updateActivityTime = async (card) => {
+        const postName = card.dataset.name;
+        const commentCount = Number(card.dataset.commentCount || "0");
+        if (!postName || !Number.isFinite(commentCount) || commentCount <= 0) return;
+
+        const url = new URL("/apis/api.halo.run/v1alpha1/comments", window.location.origin);
+        url.searchParams.set("group", COMMENT_GROUP);
+        url.searchParams.set("version", COMMENT_VERSION);
+        url.searchParams.set("kind", COMMENT_KIND);
+        url.searchParams.set("name", postName);
+        url.searchParams.set("size", "20");
+        url.searchParams.set("withReplies", "true");
+        url.searchParams.set("replySize", "5");
+        url.searchParams.set("sort", "metadata.creationTimestamp,desc");
+
+        try {
+          const response = await fetch(url.pathname + url.search, { credentials: "include" });
+          if (!response.ok) return;
+          const payload = await response.json();
+          const latest = collectLatestCommentTime(payload);
+          if (latest > 0) {
+            card.dataset.activityTime = String(Math.max(latest, parseTime(card.dataset.published)));
+            sortPostLists();
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const initPostList = () => {
+        window.HalorumHydratePostList = hydratePostList;
+        hydratePostList();
+        if (isSortDisabled()) return;
+        document.querySelectorAll(".article-card").forEach((card) => {
+          updateActivityTime(card);
+        });
+      };
+
+      window.HalorumInitPostList = initPostList;
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initPostList, { once: true });
+      } else {
+        initPostList();
+      }
+    })();
+  </script> <nav th:if="${posts.hasPrevious() || posts.hasNext()}" class="pagination-button" aria-label="分页"> <span class="pagination-button-slot prev-slot"> <a th:if="${posts.hasPrevious()}" class="prev" th:href="${posts.page le 2} ? @{/} : @{|/page/${posts.page - 1}|}">上一页</a> <span th:unless="${posts.hasPrevious()}" class="pagination-button-edge">首页</span> </span> <span class="active" th:text="|${posts.page} / ${posts.totalPages}|"></span> <span class="pagination-button-slot next-slot"> <a th:if="${posts.hasNext()}" class="next" th:href="@{|/page/${posts.page + 1}|}">下一页</a> <span th:unless="${posts.hasNext()}" class="pagination-button-edge">尾页</span> </span> </nav> <div th:if="${posts.totalPages le 1}" class="pagination-button-no-more">没有更多了</div> <style>
   .pagination-button {
     display: grid;
     grid-template-columns: 76px 76px 76px;
@@ -792,7 +973,92 @@
     font-size: 14px;
     color: var(--halorum-article-pagination-no-more-color);
   }
-</style> </div> <div class="main-right"> <section class="recent-comments"> <div class="recent-comments-content"> <div class="recent-comments-head"> <i class="halorum-icon halorum-icon-file-text recent-comments-head-icon"></i> <h3 class="recent-comments-title">最新文章</h3> </div> <div class="recent-comments-body"> <div class="recent-comments-list" th:with="latestPosts=${postFinder.list(1, #conversions.convert(theme.config.sidebar.latestPostCount ?: 6, 'java.lang.Integer')).items}"> <a class="recent-comments-list-item" th:each="item : ${latestPosts}" th:href="@{${item.status.permalink}}" th:title="${item.spec.title}"> <div class="recent-comments-list-item-avatar"> <img th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" th:alt="${item.owner.displayName ?: site.title}"> </div> <div class="recent-comments-list-item-content"> <div class="recent-comments-list-item-title" th:text="${item.spec.title}"></div> <div class="recent-comments-list-item-msg" th:text="${item.status.excerpt}"></div> </div> </a> </div> </div> </div> </section> <section class="halorum-rank home-card"> <div class="halorum-rank-content"> <div class="halorum-rank-head"> <i class="halorum-icon halorum-icon-hot halorum-rank-head-icon"></i> <h3 class="halorum-rank-title">文章榜</h3> </div> <div class="halorum-rank-body halorum-post-rank"> <div class="halorum-rank-empty">正在统计</div> </div> </div> </section> <section class="halorum-rank home-card"> <div class="halorum-rank-content"> <div class="halorum-rank-head"> <i class="halorum-icon halorum-icon-user halorum-rank-head-icon"></i> <h3 class="halorum-rank-title">作者榜</h3> </div> <div class="halorum-rank-body halorum-author-rank"> <div class="halorum-rank-empty">正在统计</div> </div> </div> </section> <section class="halorum-rank home-card"> <div class="halorum-rank-content"> <div class="halorum-rank-head"> <i class="halorum-icon halorum-icon-tag halorum-rank-head-icon"></i> <h3 class="halorum-rank-title">标签榜</h3> </div> <div class="halorum-rank-body halorum-tag-rank"> <div class="halorum-rank-empty">正在统计</div> </div> </div> </section> <div class="halorum-rank-source" hidden th:with="rankPosts=${postFinder.list(1, 50).items}"> <div class="halorum-rank-source-item" th:each="item : ${rankPosts}" th:data-title="${item.spec.title}" th:data-url="${item.status.permalink}" th:data-visit="${item.stats.visit ?: 0}" th:data-owner="${item.owner.displayName ?: site.title}" th:data-owner-url="@{/}" th:data-published="${#dates.format(item.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}"> <th:block th:if="${item.tags != null and !item.tags.isEmpty()}"> <span class="halorum-rank-source-tag" th:each="tag : ${item.tags}" th:data-name="${tag.spec.displayName}" th:data-url="${tag.status.permalink}"></span> </th:block> </div> </div> <section class="recommended-article home-card" th:if="${theme.config.sidebar.showCategoryCards != false}"> <div class="recommended-article-content" th:with="selectedCategories=${theme.config.sidebar.categoryCardCategories}, cardCategories=${#lists.isEmpty(selectedCategories) ? categoryFinder.listAll() : categoryFinder.getByNames(selectedCategories)}, cardLimit=${#conversions.convert(theme.config.sidebar.categoryCardLimit ?: 2, 'java.lang.Integer')}"> <a class="recommended-article-item-link" th:each="category, iter : ${cardCategories}" th:if="${not #lists.isEmpty(selectedCategories) or iter.index < cardLimit}" th:href="@{${category.status.permalink}}" th:title="${category.spec.displayName}"> <div class="recommended-article-item"> <img class="recommended-article-item-img" th:src="@{/assets/theme/static/images/home_recommended_article_loading.gif}" th:data-src="${#strings.isEmpty(theme.config.sidebar.defaultCategoryImage) ? '/themes/halorum/assets/theme/static/images/home_recommended_article_empty.jpg' : theme.config.sidebar.defaultCategoryImage}" th:alt="${category.spec.displayName}"> <span class="recommended-article-item-tag" th:text="${category.spec.displayName}"></span> </div> </a> </div> </section> <footer class="footer"> <div class="footer-content"> <div class="footer-item"> <a th:href="@{/categories}" target="_self" title="分类">分类</a> <a th:href="@{/tags}" target="_self" title="标签">标签</a> <a th:href="@{/archives}" target="_self" title="归档">归档</a> <a th:href="@{/sitemap.xml}" target="_blank" title="站点地图">站点地图</a> </div> <div class="footer-item" th:text="|版权所有：${site.title}|">版权所有</div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.address)}" th:text="|联系地址：${theme.config.basic.address}|"></div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.email)}"> <span>联系邮箱：</span><a th:href="|mailto:${theme.config.basic.email}|" target="_self" th:text="${theme.config.basic.email}"></a> </div> <div class="footer-item"> <a th:href="@{/}" target="_self" th:title="${site.title}" th:text="|© ${#dates.year(#dates.createNow())} ${site.title}|"></a> </div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.filing)}" th:text="${theme.config.basic.filing}"></div> <div class="footer-item">
+
+  .main-left.is-pjax-loading {
+    opacity: 0.85;
+    transition: opacity 120ms ease;
+  }
+</style> <script>
+  (() => {
+    if (window.HalorumPaginationPjaxBound) return;
+    window.HalorumPaginationPjaxBound = true;
+
+    const parser = new DOMParser();
+
+    const initReplacedContent = () => {
+      if (typeof window.HalorumInitHomePagedFeed === "function") {
+        window.HalorumInitHomePagedFeed();
+        return;
+      }
+      if (typeof window.HalorumInitHomeInfiniteFeed === "function") {
+        window.HalorumInitHomeInfiniteFeed();
+        return;
+      }
+      if (typeof window.HalorumInitPostList === "function") {
+        window.HalorumInitPostList();
+      } else if (typeof window.HalorumHydratePostList === "function") {
+        window.HalorumHydratePostList();
+      }
+    };
+
+    const replaceMainLeft = async (url, pushState) => {
+      const currentMainLeft = document.querySelector(".main-left");
+      if (!currentMainLeft) {
+        window.location.href = url;
+        return;
+      }
+
+      currentMainLeft.classList.add("is-pjax-loading");
+
+      try {
+        const response = await fetch(url, {
+          credentials: "include",
+          headers: {
+            "X-Requested-With": "Halorum-PJAX",
+          },
+        });
+        if (!response.ok) throw new Error("Failed to load page");
+
+        const html = await response.text();
+        const doc = parser.parseFromString(html, "text/html");
+        const nextMainLeft = doc.querySelector(".main-left");
+        if (!nextMainLeft) throw new Error("Missing main-left");
+
+        currentMainLeft.replaceWith(document.importNode(nextMainLeft, true));
+        document.title = doc.title;
+
+        if (pushState) {
+          window.history.pushState({ url }, "", url);
+        }
+
+        const main = document.querySelector(".main");
+        const top = (main?.getBoundingClientRect().top || 0) + window.scrollY - 12;
+        window.scrollTo({ top: Math.max(top, 0), behavior: "auto" });
+        initReplacedContent();
+      } catch (error) {
+        window.location.href = url;
+      }
+    };
+
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest(".pagination-button a");
+      if (!link) return;
+      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      const url = link.href;
+      if (!url || new URL(url).origin !== window.location.origin) return;
+
+      event.preventDefault();
+      replaceMainLeft(url, true);
+    });
+
+    window.addEventListener("popstate", () => {
+      if (!document.querySelector(".pagination-button")) return;
+      replaceMainLeft(window.location.href, false);
+    });
+  })();
+</script> </div> <div class="main-right"> <section class="recent-comments"> <div class="recent-comments-content"> <div class="recent-comments-head"> <i class="halorum-icon halorum-icon-file-text recent-comments-head-icon"></i> <h3 class="recent-comments-title">最新文章</h3> </div> <div class="recent-comments-body"> <div class="recent-comments-list" th:with="latestPosts=${postFinder.list(1, #conversions.convert(theme.config.sidebar.latestPostCount ?: 6, 'java.lang.Integer')).items}"> <a class="recent-comments-list-item" th:each="item : ${latestPosts}" th:href="@{${item.status.permalink}}" th:title="${item.spec.title}"> <div class="recent-comments-list-item-avatar"> <img th:src="@{/assets/theme/static/images/comment/default_avatar.svg}" th:alt="${item.owner.displayName ?: site.title}"> </div> <div class="recent-comments-list-item-content"> <div class="recent-comments-list-item-title" th:text="${item.spec.title}"></div> <div class="recent-comments-list-item-msg" th:text="${item.status.excerpt}"></div> </div> </a> </div> </div> </div> </section> <section class="halorum-rank home-card"> <div class="halorum-rank-content"> <div class="halorum-rank-head"> <i class="halorum-icon halorum-icon-file-text-fill halorum-rank-head-icon"></i> <h3 class="halorum-rank-title">文章榜</h3> </div> <div class="halorum-rank-body halorum-post-rank"> <div class="halorum-rank-empty">正在统计</div> </div> </div> </section> <section class="halorum-rank home-card"> <div class="halorum-rank-content"> <div class="halorum-rank-head"> <i class="halorum-icon halorum-icon-user halorum-rank-head-icon"></i> <h3 class="halorum-rank-title">作者榜</h3> </div> <div class="halorum-rank-body halorum-author-rank"> <div class="halorum-rank-empty">正在统计</div> </div> </div> </section> <section class="halorum-rank home-card"> <div class="halorum-rank-content"> <div class="halorum-rank-head"> <i class="halorum-icon halorum-icon-tag-fill halorum-rank-head-icon"></i> <h3 class="halorum-rank-title">标签榜</h3> </div> <div class="halorum-rank-body halorum-tag-rank"> <div class="halorum-rank-empty">正在统计</div> </div> </div> </section> <div class="halorum-rank-source" hidden th:with="rankPosts=${postFinder.list(1, 50).items}"> <div class="halorum-rank-source-item" th:each="item : ${rankPosts}" th:data-title="${item.spec.title}" th:data-url="${item.status.permalink}" th:data-visit="${item.stats.visit ?: 0}" th:data-owner="${item.owner.displayName ?: site.title}" th:data-owner-url="@{/}" th:data-published="${#dates.format(item.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}"> <th:block th:if="${item.tags != null and !item.tags.isEmpty()}"> <span class="halorum-rank-source-tag" th:each="tag : ${item.tags}" th:data-name="${tag.spec.displayName}" th:data-url="${tag.status.permalink}"></span> </th:block> </div> </div> <section class="recommended-article home-card" th:if="${theme.config.sidebar.showCategoryCards != false}"> <div class="recommended-article-content" th:with="selectedCategories=${theme.config.sidebar.categoryCardCategories}, cardCategories=${#lists.isEmpty(selectedCategories) ? categoryFinder.listAll() : categoryFinder.getByNames(selectedCategories)}, cardLimit=${#conversions.convert(theme.config.sidebar.categoryCardLimit ?: 2, 'java.lang.Integer')}"> <a class="recommended-article-item-link" th:each="category, iter : ${cardCategories}" th:if="${not #lists.isEmpty(selectedCategories) or iter.index < cardLimit}" th:href="@{${category.status.permalink}}" th:title="${category.spec.displayName}"> <div class="recommended-article-item"> <img class="recommended-article-item-img" th:src="@{/assets/theme/static/images/home_recommended_article_loading.gif}" th:data-src="${#strings.isEmpty(theme.config.sidebar.defaultCategoryImage) ? '/themes/halorum/assets/theme/static/images/home_recommended_article_empty.jpg' : theme.config.sidebar.defaultCategoryImage}" th:alt="${category.spec.displayName}"> <span class="recommended-article-item-tag" th:text="${category.spec.displayName}"></span> </div> </a> </div> </section> <footer class="footer"> <div class="footer-content"> <div class="footer-item"> <a th:href="@{/categories}" target="_self" title="分类">分类</a> <a th:href="@{/tags}" target="_self" title="标签">标签</a> <a th:href="@{/archives}" target="_self" title="归档">归档</a> <a th:href="@{/sitemap.xml}" target="_blank" title="站点地图">站点地图</a> </div> <div class="footer-item" th:text="|版权所有：${site.title}|">版权所有</div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.address)}" th:text="|联系地址：${theme.config.basic.address}|"></div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.email)}"> <span>联系邮箱：</span><a th:href="|mailto:${theme.config.basic.email}|" target="_self" th:text="${theme.config.basic.email}"></a> </div> <div class="footer-item"> <a th:href="@{/}" target="_self" th:title="${site.title}" th:text="|© ${#dates.year(#dates.createNow())} ${site.title}|"></a> </div> <div class="footer-item" th:if="${!#strings.isEmpty(theme.config.basic.filing)}" th:text="${theme.config.basic.filing}"></div> <div class="footer-item">
 Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a> </div> </div> </footer> </div> <style>
   .halorum-rank {
     margin-bottom: 20px;
@@ -902,6 +1168,7 @@ Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a> </d
         name: tag.dataset.name || "",
         url: tag.dataset.url || "#",
       }));
+
       return {
         title: item.dataset.title || "",
         url: item.dataset.url || "#",
@@ -912,18 +1179,22 @@ Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a> </d
         tags,
       };
     });
+
     const recentLimit = Date.now() - 3 * 24 * 60 * 60 * 1000;
     const recentPosts = source.filter((item) => item.published && item.published.getTime() >= recentLimit);
     const recentOrAll = recentPosts.length ? recentPosts : source;
     const escapeHtml = (value) =>
       String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
     const render = (selector, rows, metaLabel) => {
       const container = document.querySelector(selector);
       if (!container) return;
+
       if (!rows.length) {
         container.innerHTML = '<div class="halorum-rank-empty">暂无数据</div>';
         return;
       }
+
       container.innerHTML = rows
         .slice(0, 5)
         .map(
@@ -955,6 +1226,7 @@ Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a> </d
       row.count += 1;
       authors.set(key, row);
     });
+
     render(
       ".halorum-author-rank",
       Array.from(authors.values())
@@ -967,16 +1239,18 @@ Blog By <a href="https://www.halo.run" target="_blank" title="Halo">Halo</a> </d
     recentOrAll.forEach((post) => {
       post.tags.forEach((tag) => {
         if (!tag.name) return;
-      const row = tags.get(tag.name) || { title: tag.name, url: tag.url, visit: 0 };
+
+        const row = tags.get(tag.name) || { title: tag.name, url: tag.url, visit: 0 };
         row.visit += post.visit;
         tags.set(tag.name, row);
       });
     });
+
     render(
       ".halorum-tag-rank",
       Array.from(tags.values())
         .sort((a, b) => b.visit - a.visit)
-        .map((item) => ({ title: item.title.startsWith("#") ? item.title : "#" + item.title, url: item.url, meta: item.visit })),
+        .map((item) => ({ title: item.title.startsWith("#") ? item.title : `#${item.title}`, url: item.url, meta: item.visit })),
       "浏览"
     );
   })();

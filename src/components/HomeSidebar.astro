@@ -32,10 +32,11 @@ import SiteFooter from "./SiteFooter.astro";
       </div>
     </div>
   </section>
+
   <section class="halorum-rank home-card">
     <div class="halorum-rank-content">
       <div class="halorum-rank-head">
-        <i class="halorum-icon halorum-icon-hot halorum-rank-head-icon"></i>
+        <i class="halorum-icon halorum-icon-file-text-fill halorum-rank-head-icon"></i>
         <h3 class="halorum-rank-title">文章榜</h3>
       </div>
       <div class="halorum-rank-body halorum-post-rank">
@@ -43,6 +44,7 @@ import SiteFooter from "./SiteFooter.astro";
       </div>
     </div>
   </section>
+
   <section class="halorum-rank home-card">
     <div class="halorum-rank-content">
       <div class="halorum-rank-head">
@@ -54,10 +56,11 @@ import SiteFooter from "./SiteFooter.astro";
       </div>
     </div>
   </section>
+
   <section class="halorum-rank home-card">
     <div class="halorum-rank-content">
       <div class="halorum-rank-head">
-        <i class="halorum-icon halorum-icon-tag halorum-rank-head-icon"></i>
+        <i class="halorum-icon halorum-icon-tag-fill halorum-rank-head-icon"></i>
         <h3 class="halorum-rank-title">标签榜</h3>
       </div>
       <div class="halorum-rank-body halorum-tag-rank">
@@ -65,6 +68,7 @@ import SiteFooter from "./SiteFooter.astro";
       </div>
     </div>
   </section>
+
   <div class="halorum-rank-source" hidden th:with="rankPosts=${postFinder.list(1, 50).items}">
     <div
       class="halorum-rank-source-item"
@@ -86,6 +90,7 @@ import SiteFooter from "./SiteFooter.astro";
       </th:block>
     </div>
   </div>
+
   <section class="recommended-article home-card" th:if="${theme.config.sidebar.showCategoryCards != false}">
     <div
       class="recommended-article-content"
@@ -110,6 +115,7 @@ import SiteFooter from "./SiteFooter.astro";
       </a>
     </div>
   </section>
+
   <SiteFooter />
 </div>
 
@@ -224,6 +230,7 @@ import SiteFooter from "./SiteFooter.astro";
         name: tag.dataset.name || "",
         url: tag.dataset.url || "#",
       }));
+
       return {
         title: item.dataset.title || "",
         url: item.dataset.url || "#",
@@ -234,18 +241,22 @@ import SiteFooter from "./SiteFooter.astro";
         tags,
       };
     });
+
     const recentLimit = Date.now() - 3 * 24 * 60 * 60 * 1000;
     const recentPosts = source.filter((item) => item.published && item.published.getTime() >= recentLimit);
     const recentOrAll = recentPosts.length ? recentPosts : source;
     const escapeHtml = (value) =>
       String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+
     const render = (selector, rows, metaLabel) => {
       const container = document.querySelector(selector);
       if (!container) return;
+
       if (!rows.length) {
         container.innerHTML = '<div class="halorum-rank-empty">暂无数据</div>';
         return;
       }
+
       container.innerHTML = rows
         .slice(0, 5)
         .map(
@@ -277,6 +288,7 @@ import SiteFooter from "./SiteFooter.astro";
       row.count += 1;
       authors.set(key, row);
     });
+
     render(
       ".halorum-author-rank",
       Array.from(authors.values())
@@ -289,18 +301,19 @@ import SiteFooter from "./SiteFooter.astro";
     recentOrAll.forEach((post) => {
       post.tags.forEach((tag) => {
         if (!tag.name) return;
-      const row = tags.get(tag.name) || { title: tag.name, url: tag.url, visit: 0 };
+
+        const row = tags.get(tag.name) || { title: tag.name, url: tag.url, visit: 0 };
         row.visit += post.visit;
         tags.set(tag.name, row);
       });
     });
+
     render(
       ".halorum-tag-rank",
       Array.from(tags.values())
         .sort((a, b) => b.visit - a.visit)
-        .map((item) => ({ title: item.title.startsWith("#") ? item.title : "#" + item.title, url: item.url, meta: item.visit })),
+        .map((item) => ({ title: item.title.startsWith("#") ? item.title : `#${item.title}`, url: item.url, meta: item.visit })),
       "浏览"
     );
   })();
 </script>
-

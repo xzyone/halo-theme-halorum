@@ -1,8 +1,23 @@
-﻿<div class="article-card-wrap">
+---
+interface Props {
+  listClass?: string;
+  mode?: "default" | "reserve";
+}
+
+const { listClass = "", mode = "default" } = Astro.props;
+const wrapClasses = ["article-card-wrap", listClass].filter(Boolean);
+const isReserve = mode === "reserve";
+---
+
+<div class:list={wrapClasses}>
   <article
     class="article-card"
     th:each="post : ${posts.items}"
     th:data-link="${post.status.permalink}"
+    th:data-name="${post.metadata.name}"
+    th:data-pinned="${post.spec.pinned}"
+    th:data-published="${#dates.format(post.spec.publishTime, 'yyyy-MM-dd''T''HH:mm:ss')}"
+    th:data-comment-count="${post.stats.comment ?: 0}"
     itemscope
     itemtype="http://schema.org/BlogPosting"
   >
@@ -31,7 +46,10 @@
     <div class="article-card-body">
       <div class="article-card-main">
         <a class="article-card-main-link" th:href="@{${post.status.permalink}}" target="_self" th:title="${post.spec.title}">
-          <h2 class="article-card-title" itemprop="name headline" th:text="${post.spec.title}"></h2>
+          <h2 class="article-card-title" itemprop="name headline">
+            <span class="article-card-sticky-tag" th:if="${post.spec.pinned}">置顶</span>
+            <span th:text="${post.spec.title}"></span>
+          </h2>
           <p class="article-card-desc" itemprop="articleBody" th:text="${post.status.excerpt}"></p>
         </a>
         <div class="article-card-tags" th:if="${post.tags != null and !post.tags.isEmpty()}">
@@ -80,133 +98,273 @@
   </div>
 </div>
 
-<style is:inline>
-  .article-card {
-    position: relative;
-  }
+{!isReserve && (
+  <style is:inline>
+    .article-card {
+      position: relative;
+    }
 
-  .article-card-main-link {
-    display: block;
-    width: 100%;
-    color: inherit;
-    text-decoration: none;
-  }
+    .article-card-main-link {
+      display: block;
+      width: 100%;
+      color: inherit;
+      text-decoration: none;
+    }
 
-  .article-card-main {
-    min-width: 0;
-    flex: 1 1 auto;
-    padding-right: 16px;
-  }
-
-  .article-card-title {
-    min-height: 24px;
-  }
-
-  .article-card-desc {
-    min-height: 44px;
-    margin-bottom: 10px;
-  }
-
-  .article-card-tags {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 18px;
-    overflow: hidden;
-  }
-
-  .article-card-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    width: 132px;
-    margin-left: auto;
-    min-height: 24px;
-    flex: 0 0 auto;
-  }
-
-  .article-card-footer-left {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-shrink: 0;
-  }
-
-  .article-card-footer-item {
-    display: inline-grid;
-    grid-template-columns: 13px 24px;
-    align-items: center;
-    column-gap: 3px;
-    width: 40px;
-    white-space: nowrap;
-  }
-
-  .article-card-footer-item + .article-card-footer-item {
-    margin-left: 0;
-  }
-
-  .article-card-footer-item-icon {
-    display: inline-flex;
-    justify-content: center;
-    width: 13px;
-  }
-
-  .article-card-footer-count {
-    min-width: 0;
-    text-align: left;
-  }
-
-  @media screen and (max-width: 720px) {
     .article-card-main {
-      padding-right: 10px;
+      min-width: 0;
+      flex: 1 1 auto;
+      padding-right: 16px;
+    }
+
+    .article-card-title {
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .article-card-desc {
+      min-height: 44px;
+      margin-bottom: 10px;
+    }
+
+    .article-card-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 18px;
+      overflow: hidden;
     }
 
     .article-card-footer {
-      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 132px;
+      margin-left: auto;
+      min-height: 24px;
+      flex: 0 0 auto;
     }
-  }
 
-  .article-card-hidden-a {
-    display: block;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    overflow: hidden;
-    text-indent: -9999px;
-    white-space: nowrap;
-  }
+    .article-card-footer-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
 
-  .article-card-category,
-  .article-card-footer,
-  .article-card-tags,
-  .article-card-tag,
-  .article-card-main-link {
-    position: relative;
-    z-index: 2;
-  }
+    .article-card-footer-item {
+      display: inline-grid;
+      grid-template-columns: 13px 24px;
+      align-items: center;
+      column-gap: 3px;
+      width: 40px;
+      white-space: nowrap;
+    }
 
-  .article-card-main-link:active {
-    opacity: 0.86;
-  }
-</style>
+    .article-card-footer-item + .article-card-footer-item {
+      margin-left: 0;
+    }
 
-<script is:inline>
-  (() => {
-    const formatCount = (value) => {
-      const count = Number(value);
-      if (!Number.isFinite(count) || count < 1000) {
-        return String(Number.isFinite(count) ? count : 0);
+    .article-card-footer-item-icon {
+      display: inline-flex;
+      justify-content: center;
+      width: 13px;
+    }
+
+    .article-card-footer-count {
+      min-width: 0;
+      text-align: left;
+    }
+
+    @media screen and (max-width: 720px) {
+      .article-card-main {
+        padding-right: 10px;
       }
-      const kilo = count / 1000;
-      if (kilo < 10) {
-        return `${kilo.toFixed(1).replace(/\.0$/, '')}k`;
+
+      .article-card-footer {
+        width: auto;
       }
-      return `${Math.round(kilo)}k`;
-    };
+    }
 
-    document.querySelectorAll('.article-card-footer-count[data-count]').forEach((item) => {
-      item.textContent = formatCount(item.dataset.count);
-    });
-  })();
-</script>
+    .article-card-hidden-a {
+      display: block;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      text-indent: -9999px;
+      white-space: nowrap;
+    }
 
+    .article-card-category,
+    .article-card-footer,
+    .article-card-tags,
+    .article-card-tag,
+    .article-card-main-link,
+    .article-card-sticky-tag {
+      position: relative;
+      z-index: 2;
+    }
+
+    .article-card-sticky-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      color: var(--halorum-article-card-sticky-tag-color);
+      background: var(--halorum-article-card-sticky-tag-bg);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .article-card-main-link:active {
+      opacity: 0.86;
+    }
+  </style>
+)}
+
+{!isReserve && (
+  <script is:inline>
+    (() => {
+      const COMMENT_GROUP = "content.halo.run";
+      const COMMENT_VERSION = "v1alpha1";
+      const COMMENT_KIND = "Post";
+
+      const formatCount = (value) => {
+        const count = Number(value);
+        if (!Number.isFinite(count) || count < 1000) {
+          return String(Number.isFinite(count) ? count : 0);
+        }
+        const kilo = count / 1000;
+        if (kilo < 10) {
+          return `${kilo.toFixed(1).replace(/\.0$/, "")}k`;
+        }
+        return `${Math.round(kilo)}k`;
+      };
+
+      const parseTime = (value) => {
+        const timestamp = Date.parse(value || "");
+        return Number.isFinite(timestamp) ? timestamp : 0;
+      };
+
+      const isSortDisabled = () => window.HalorumDisablePostListSort === true;
+      const getActivityTime = (card) => Number(card.dataset.activityTime || parseTime(card.dataset.published) || 0);
+      const getPinnedWeight = (card) => (card.dataset.pinned === "true" ? 1 : 0);
+
+      const mergeReserveCards = () => {
+        const mainList = document.querySelector(".article-card-wrap:not(.article-card-reserve-list)");
+        const reserveList = document.querySelector(".article-card-reserve-list");
+        if (!mainList || !reserveList) return;
+
+        const existing = new Set(Array.from(mainList.querySelectorAll(":scope > .article-card")).map((card) => card.dataset.name || ""));
+        Array.from(reserveList.querySelectorAll(":scope > .article-card")).forEach((card) => {
+          const name = card.dataset.name || "";
+          if (name && existing.has(name)) return;
+          existing.add(name);
+          mainList.appendChild(card);
+        });
+      };
+
+      const sortPostLists = () => {
+        if (isSortDisabled()) return;
+        mergeReserveCards();
+        document.querySelectorAll(".article-card-wrap").forEach((list) => {
+          const cards = Array.from(list.querySelectorAll(":scope > .article-card"));
+          cards
+            .sort((left, right) => {
+              const pinnedDelta = getPinnedWeight(right) - getPinnedWeight(left);
+              if (pinnedDelta !== 0) return pinnedDelta;
+              return getActivityTime(right) - getActivityTime(left);
+            })
+            .forEach((card) => list.appendChild(card));
+        });
+        if (typeof window.HalorumApplyHomeVisibleLimit === "function") {
+          window.HalorumApplyHomeVisibleLimit();
+        }
+      };
+
+      const hydratePostList = () => {
+        document.querySelectorAll(".article-card-footer-count[data-count]").forEach((item) => {
+          item.textContent = formatCount(item.dataset.count);
+        });
+
+        document.querySelectorAll(".article-card").forEach((card) => {
+          if (!card.dataset.activityTime) {
+            card.dataset.activityTime = String(parseTime(card.dataset.published));
+          }
+        });
+
+        sortPostLists();
+      };
+
+      const collectLatestCommentTime = (payload) => {
+        const items = Array.isArray(payload?.items) ? payload.items : [];
+        return items.reduce((latest, comment) => {
+          const replyItems = Array.isArray(comment?.replies?.items) ? comment.replies.items : [];
+          const commentTime = Math.max(
+            parseTime(comment?.metadata?.creationTimestamp),
+            parseTime(comment?.spec?.creationTime),
+            parseTime(comment?.status?.lastReplyTime)
+          );
+          const replyTime = replyItems.reduce((replyLatest, reply) => {
+            return Math.max(replyLatest, parseTime(reply?.metadata?.creationTimestamp), parseTime(reply?.spec?.creationTime));
+          }, 0);
+          return Math.max(latest, commentTime, replyTime);
+        }, 0);
+      };
+
+      const updateActivityTime = async (card) => {
+        const postName = card.dataset.name;
+        const commentCount = Number(card.dataset.commentCount || "0");
+        if (!postName || !Number.isFinite(commentCount) || commentCount <= 0) return;
+
+        const url = new URL("/apis/api.halo.run/v1alpha1/comments", window.location.origin);
+        url.searchParams.set("group", COMMENT_GROUP);
+        url.searchParams.set("version", COMMENT_VERSION);
+        url.searchParams.set("kind", COMMENT_KIND);
+        url.searchParams.set("name", postName);
+        url.searchParams.set("size", "20");
+        url.searchParams.set("withReplies", "true");
+        url.searchParams.set("replySize", "5");
+        url.searchParams.set("sort", "metadata.creationTimestamp,desc");
+
+        try {
+          const response = await fetch(url.pathname + url.search, { credentials: "include" });
+          if (!response.ok) return;
+          const payload = await response.json();
+          const latest = collectLatestCommentTime(payload);
+          if (latest > 0) {
+            card.dataset.activityTime = String(Math.max(latest, parseTime(card.dataset.published)));
+            sortPostLists();
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const initPostList = () => {
+        window.HalorumHydratePostList = hydratePostList;
+        hydratePostList();
+        if (isSortDisabled()) return;
+        document.querySelectorAll(".article-card").forEach((card) => {
+          updateActivityTime(card);
+        });
+      };
+
+      window.HalorumInitPostList = initPostList;
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initPostList, { once: true });
+      } else {
+        initPostList();
+      }
+    })();
+  </script>
+)}

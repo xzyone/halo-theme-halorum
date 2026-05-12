@@ -1,8 +1,8 @@
 ---
 import HomeCategoryRail from "../components/HomeCategoryRail.astro";
+import HomeInfiniteFeed from "../components/HomeInfiniteFeed.astro";
+import HomePagedFeed from "../components/HomePagedFeed.astro";
 import HomeSidebar from "../components/HomeSidebar.astro";
-import Pagination from "../components/Pagination.astro";
-import PostList from "../components/PostList.astro";
 import HalorumLayout from "../layouts/HalorumLayout.astro";
 ---
 
@@ -14,23 +14,16 @@ import HalorumLayout from "../layouts/HalorumLayout.astro";
   showFooterInRight
 >
   <HomeCategoryRail />
-  <div
-    class="main-left"
-    th:with="sourcePosts=${posts}, homePage=${sourcePosts == null ? 1 : #conversions.convert(sourcePosts.page ?: 1, 'java.lang.Integer')}, homePageSize=${#conversions.convert(theme.config.sidebar.homePostPageSize ?: 15, 'java.lang.Integer')}, posts=${postFinder.list({page: homePage, size: homePageSize, sort: {'spec.publishTime,desc', 'metadata.creationTimestamp,desc'}})}"
+  <th:block
+    th:with="sourcePosts=${posts}, homePage=${sourcePosts == null ? 1 : #conversions.convert(sourcePosts.page ?: 1, 'java.lang.Integer')}, homePageSize=${#conversions.convert(theme.config.sidebar.homePostPageSize ?: 15, 'java.lang.Integer')}, homeLoadMode=${theme.config.sidebar.homePostLoadMode ?: 'button'}, posts=${postFinder.list({page: homePage, size: homePageSize, sort: {'spec.pinned,desc', 'spec.publishTime,desc', 'metadata.creationTimestamp,desc'}})}"
   >
-    <PostList />
-    <th:block th:if="${theme.config.sidebar.homePostLoadMode != 'infinite'}">
-      <Pagination />
+    <th:block th:if="${homeLoadMode != 'infinite'}">
+      <HomePagedFeed />
     </th:block>
-    <div
-      class="halorum-infinite-loader"
-      th:if="${theme.config.sidebar.homePostLoadMode == 'infinite'}"
-      th:classappend="${posts.hasNext()} ? '' : ' no-more'"
-      th:data-next-url="${posts.hasNext()} ? @{|/page/${posts.page + 1}|} : ''"
-    >
-      <span th:text="${posts.hasNext()} ? '继续浏览' : '没有更多了'">继续浏览</span>
-    </div>
-  </div>
+    <th:block th:if="${homeLoadMode == 'infinite'}">
+      <HomeInfiniteFeed />
+    </th:block>
+  </th:block>
   <HomeSidebar />
 </HalorumLayout>
 
@@ -67,88 +60,4 @@ import HalorumLayout from "../layouts/HalorumLayout.astro";
       max-width: none;
     }
   }
-
-  .halorum-infinite-loader {
-    min-height: 42px;
-    margin: 12px 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--halorum-article-pagination-no-more-color);
-    font-size: 14px;
-    cursor: pointer;
-  }
-
-  .halorum-infinite-loader.loading span::after {
-    content: "...";
-  }
-
-  .halorum-infinite-loader.no-more {
-    cursor: default;
-  }
 </style>
-
-<script is:inline>
-  (() => {
-    const loader = document.querySelector(".halorum-infinite-loader");
-    const list = document.querySelector(".article-card-wrap");
-    if (!loader || !list || !("IntersectionObserver" in window)) return;
-
-    let nextUrl = loader.dataset.nextUrl || "";
-    let loading = false;
-
-    const runCardScripts = () => {
-      document.querySelectorAll(".article-card-footer-count[data-count]").forEach((item) => {
-        const count = Number(item.dataset.count);
-        if (!Number.isFinite(count) || count < 1000) {
-          item.textContent = String(Number.isFinite(count) ? count : 0);
-          return;
-        }
-        const kilo = count / 1000;
-        item.textContent = kilo < 10 ? `${kilo.toFixed(1).replace(/\.0$/, "")}k` : `${Math.round(kilo)}k`;
-      });
-    };
-
-    const finish = (message) => {
-      const label = loader.querySelector("span");
-      if (label) label.textContent = message;
-      loader.classList.add("no-more");
-      observer.disconnect();
-    };
-
-    const loadNext = async () => {
-      if (loading || !nextUrl) {
-        if (!nextUrl) finish("没有更多了");
-        return;
-      }
-      loading = true;
-      loader.classList.add("loading");
-      try {
-        const response = await fetch(nextUrl, { credentials: "include" });
-        if (!response.ok) throw new Error("Failed to load next page");
-        const html = await response.text();
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        const cards = Array.from(doc.querySelectorAll(".article-card-wrap .article-card"));
-        cards.forEach((card) => list.appendChild(document.importNode(card, true)));
-        runCardScripts();
-
-        const nextLoader = doc.querySelector(".halorum-infinite-loader");
-        nextUrl = nextLoader?.dataset.nextUrl || "";
-        if (!nextUrl) finish("没有更多了");
-      } catch (error) {
-        const label = loader.querySelector("span");
-        if (label) label.textContent = "加载失败，点击重试";
-      } finally {
-        loading = false;
-        loader.classList.remove("loading");
-      }
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      if (entries.some((entry) => entry.isIntersecting)) loadNext();
-    }, { rootMargin: "320px 0px" });
-
-    loader.addEventListener("click", loadNext);
-    observer.observe(loader);
-  })();
-</script>
