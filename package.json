@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro build --watch",
-    "build": "astro build",
-    "pack:theme": "powershell -ExecutionPolicy Bypass -File scripts/package-theme.ps1",
+    "build": "astro build && node scripts/run-package-theme.mjs",
+    "pack:theme": "node scripts/run-package-theme.mjs",
     "format": "prettier --write ."
   },
   "dependencies": {
