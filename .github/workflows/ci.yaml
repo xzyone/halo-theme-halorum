@@ -13,7 +13,10 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -33,8 +36,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Packaging regression tests
+        shell: pwsh
+        run: ./scripts/test-package-theme.ps1
+
       - name: Build theme
         run: pnpm build
 
       - name: Verify theme package
-        run: pnpm pack:theme
+        shell: pwsh
+        run: ./scripts/verify-theme-package.ps1
