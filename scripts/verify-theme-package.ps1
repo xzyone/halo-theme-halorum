@@ -39,7 +39,12 @@ try {
     $sha = [System.Security.Cryptography.SHA256]::Create()
     try {
       $actual = [BitConverter]::ToString($sha.ComputeHash($stream)).Replace("-", "")
-      $expected = (Get-FileHash -LiteralPath $source -Algorithm SHA256).Hash
+      # Use .NET for both streams: Windows PowerShell launched from pwsh may
+      # inherit a module path that does not expose Get-FileHash.
+      $sourceStream = [System.IO.File]::OpenRead($source)
+      try {
+        $expected = [BitConverter]::ToString($sha.ComputeHash($sourceStream)).Replace("-", "")
+      } finally { $sourceStream.Dispose() }
       if ($actual -ne $expected) { throw "Archive content mismatch: $name" }
     } finally {
       $sha.Dispose()
