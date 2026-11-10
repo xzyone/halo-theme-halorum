@@ -36,8 +36,8 @@ pnpm build
 pnpm pack:theme
 ```
 
-`pnpm build` 会将 Astro 模板构建到 `templates/` 目录。  
-`pnpm pack:theme` 会在仓库上级目录生成 `Halorum.zip`。
+`pnpm build` 会将 Astro 模板构建到 `templates/` 目录，并打包、校验 ZIP。
+`pnpm pack:theme` 会在 `dist/Halorum.zip` 生成并校验主题包，同时复制到仓库上级目录（兼容旧路径）。运行前需安装 PowerShell（Windows 自带 Windows PowerShell；Linux/macOS 需要 `pwsh`）。
 
 开发时可以使用：
 
@@ -76,7 +76,7 @@ Halorum/
 生成的主题包为：
 
 ```text
-../Halorum.zip
+dist/Halorum.zip
 ```
 
 ## 版本记录
@@ -104,3 +104,12 @@ Halorum/
 ## 许可证
 
 本项目采用 BSD-3-Clause 许可证，详见 [LICENSE](./LICENSE)。
+
+### 打包验证与发布
+
+- 仅排除仓库根目录 `dist/`；保留 `public/assets/theme/dist/` 及 Astro 复制到 `templates/assets/theme/dist/` 的运行资源。
+- 每次打包会重新打开 ZIP，检查元信息、首页/文章模板、全部 public/templates 文件及其 SHA-256，并拒绝开发目录和嵌套 ZIP。校验失败会终止构建，不执行兼容路径复制。
+- 回归测试：`pwsh -File scripts/test-package-theme.ps1`；独立校验：`pwsh -File scripts/verify-theme-package.ps1`。Windows 可将 `pwsh` 换成 `powershell`。
+- CI 在 Windows 和 Ubuntu 测试打包并构建。CD 的共享 workflow 运行 `pnpm build`，通过内置 ZIP 校验后才上传 `dist`；GitHub Release 和应用市场均消费该产物。
+- 发布修复版前同步 `package.json`、`theme.yaml`、README 和 CHANGELOG 的版本，建议使用新版本 `v0.0.3`，不要覆盖 v0.0.2。发布后下载两端实际分发包，核对 SHA-256 和 ZIP 内容。
+- 在干净的 Halo 2.24.2 环境分别验证 ZIP 上传安装、应用市场安装及从 v0.0.2 升级；检查首页、文章页、CSS、字体和图片请求无 404。自动 ZIP 校验不能代替 Halo 安装验证。

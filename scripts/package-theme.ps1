@@ -23,13 +23,10 @@ try {
   try {
     Get-ChildItem -LiteralPath $themeRoot -Recurse -File -Force |
       Where-Object {
-        $normalizedPath = $_.FullName.Replace("\", "/")
-        $normalizedPath -notmatch "/node_modules/" -and
-        $normalizedPath -notmatch "/\\.git/" -and
-        $normalizedPath -notmatch "/\\.astro/" -and
-        $normalizedPath -notmatch "/dist/" -and
-        $normalizedPath -notmatch "/\\.vscode/" -and
-        $normalizedPath -notmatch "/\\.idea/" -and
+        # Match repository-relative paths, never the checkout's parent directories.
+        $normalizedPath = $_.FullName.Substring($themeRoot.Length + 1).Replace("\", "/")
+        $normalizedPath -notmatch "(^|/)(node_modules|\.git|\.astro|\.vscode|\.idea)/" -and
+        $normalizedPath -notmatch "^dist/" -and
         $_.Extension -ne ".zip"
       } |
       ForEach-Object {
@@ -52,6 +49,13 @@ try {
   }
 } finally {
   $stream.Dispose()
+}
+
+try {
+  & (Join-Path $PSScriptRoot "verify-theme-package.ps1") -ZipPath $zipPath -ThemeRoot $themeRoot
+} catch {
+  Remove-Item -LiteralPath $zipPath -Force
+  throw
 }
 
 Copy-Item -LiteralPath $zipPath -Destination $legacyZipPath -Force
